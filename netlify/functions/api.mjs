@@ -8,7 +8,7 @@ const json = (data,status=200,extras={})=>new Response(JSON.stringify(data),{sta
 const hash = s=>createHash('sha256').update(s).digest('hex');
 const equal = (a,b)=>{const x=Buffer.from(hash(String(a))),y=Buffer.from(hash(String(b)));return timingSafeEqual(x,y)};
 const required = (key)=>{const v=process.env[key];if(!v)throw new Error('Hiányzó Netlify környezeti változó: '+key);return v};
-const safeUser = u=>({id:String(u.id),email:String(u.email),displayName:String(u.displayName||''),role:u.role==='developer'?'developer':'customer'});
+const safeUser = u=>({id:String(u.id),email:String(u.email),displayName:String(u.displayName||''),role:u.role==='developer'?'developer':'customer',discordId:String(u.discordId||''),discordName:String(u.discordName||'')});
 async function bridge(action,payload={}){
   const url=required('APPS_SCRIPT_URL'),secret=required('APPS_SCRIPT_BRIDGE_SECRET');
   if(!/^https:\/\/script\.google\.com\/macros\/s\/[A-Za-z0-9_-]+\/exec$/.test(url))throw Error('Hibás APPS_SCRIPT_URL.');
@@ -42,9 +42,77 @@ const setCookie=token=>`${COOKIE_NAME}=${token}; Path=/; HttpOnly; Secure; SameS
 const clearCookie=()=>`${COOKIE_NAME}=; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=0`;
 async function me(req){const session=readSession(req);if(!session)return null;const u=await bridge('findUserById',{id:session.id});return u?u:null}
 async function needUser(req,admin=false){const u=await me(req);if(!u)throw Error('Előbb jelentkezz be.');if(admin&&u.role!=='developer')throw Error('Nincs fejlesztői jogosultságod.');return u}
+// Discord OAuth2: server-side code exchange, session-bound state cookie.
+const DISCORD_STATE_COOKIE = 'sx_discord_state';
+function getCookie(req, key) {
+  return (req.headers.get('cookie') || '').split(';').map(x=>x.trim())
+    .find(x=>x.startsWith(key+'='))?.slice(key.length+1) || '';
+}
+const oauthCookie = (value, maxAge) =>
+  `${DISCORD_STATE_COOKIE}=${value}; Path=/; HttpOnly; Secure; SameSite=Lax; Max-Age=${maxAge}`;
+const oauthRedirect = (path, cookie) => new Response(null,{status:302,headers:{
+  location:path,'cache-control':'no-store',...(cookie?{'set-cookie':cookie}:{})
+}});
+function discordCallbackUrl(req){
+  // Always derive from current deployment origin. Add this exact URL in the Discord portal.
+  return new URL('/.netlify/functions/api?oauth=callback',req.url).href;
+}
+async function discordRoute(req) {
+  const url = new URL(req.url), mode=url.searchParams.get('oauth');
+  const u = await needUser(req);
+  if(mode==='start') {
+    const state=randomBytes(24).toString('hex');
+    const redirect=discordCallbackUrl(req);
+    const auth=new URL('https://discord.com/oauth2/authorize');
+    auth.searchParams.set('response_type','code');
+    auth.searchParams.set('client_id',required('DISCORD_CLIENT_ID'));
+    auth.searchParams.set('redirect_uri',redirect);
+    auth.searchParams.set('scope','identify');
+    auth.searchParams.set('state',state);
+    auth.searchParams.set('prompt','consent');
+    const packed=Buffer.from(JSON.stringify({state,userId:u.id,created:Date.now()})).toString('base64url');
+    return oauthRedirect(auth.href,oauthCookie(packed,600));
+  }
+  if(mode==='callback') {
+    const packed=getCookie(req,DISCORD_STATE_COOKIE);
+    const clear=oauthCookie('',0);
+    let data;
+    try { data=JSON.parse(Buffer.from(packed,'base64url').toString()); }catch{return oauthRedirect('/?discord=error',clear)}
+    if(!data||data.userId!==u.id||Date.now()-Number(data.created)>600000||
+       !equal(url.searchParams.get('state')||'',data.state||'')||
+       !/^[a-f0-9]{48}$/.test(data.state||'')||
+       !url.searchParams.has('code')) return oauthRedirect('/?discord=error',clear);
+    const form=new URLSearchParams({client_id:required('DISCORD_CLIENT_ID'),client_secret:required('DISCORD_CLIENT_SECRET'),
+      grant_type:'authorization_code',code:url.searchParams.get('code'),redirect_uri:discordCallbackUrl(req)});
+    try {
+      const exchange=await fetch('https://discord.com/api/v10/oauth2/token',{
+        method:'POST',headers:{'content-type':'application/x-www-form-urlencoded'},body:form
+      });
+      if(!exchange.ok) throw Error('OAuth token exchange failed');
+      const token=await exchange.json();
+      const meResponse=await fetch('https://discord.com/api/v10/users/@me',{
+        headers:{authorization:'Bearer '+token.access_token}
+      });
+      if(!meResponse.ok) throw Error('Discord account request failed');
+      const discord=await meResponse.json();
+      if(!/^\d{15,22}$/.test(String(discord.id))) throw Error('Invalid Discord ID');
+      await bridge('linkDiscord',{userId:u.id,discordId:String(discord.id),
+        discordName:String(discord.global_name||discord.username||'Discord user').slice(0,80)});
+      return oauthRedirect('/?discord=connected',clear);
+    } catch(err) {
+      console.error('Discord OAuth error:',String(err.message));
+      return oauthRedirect('/?discord=error',clear);
+    }
+  }
+  return json({ok:false,error:'Unknown OAuth route'},404);
+}
+
 function validateEmail(v){const s=String(v||'').trim().toLowerCase();if(s.length>254||!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s))throw Error('Hibás e-mail cím.');return s}
 function validatePassword(s){if(typeof s!=='string'||s.length<12||s.length>128)throw Error('A jelszó legyen 12–128 karakter.');return s}
 export default async (req)=>{
+  if(req.method==='GET' && new URL(req.url).searchParams.has('oauth')) {
+    try{return await discordRoute(req)}catch(err){console.error('Discord route:',String(err.message));return oauthRedirect('/?discord=error',oauthCookie('',0))}
+  }
   if(req.method!=='POST')return json({ok:false,error:'POST required.'},405);
   const origin=req.headers.get('origin');
   if(origin&&origin!==new URL(req.url).origin)return json({ok:false,error:'Origin rejected.'},403);
@@ -104,11 +172,14 @@ export default async (req)=>{
         data={message:'Jelszó megváltoztatva. Jelentkezz be.'};extra={'set-cookie':clearCookie()};break;
       }
       case 'getAdminProducts':await needUser(req,true);data=await bridge('getAdminProducts');break;
+      case 'getAdminOrders':await needUser(req,true);data=await bridge('getAdminOrders');break;
       case 'saveProduct':await needUser(req,true);data=await bridge('saveProduct',p);break;
       case 'deleteProduct':await needUser(req,true);data=await bridge('hideProduct',{id:p.id});break;
       case 'uploadProductImage':await needUser(req,true);data=await bridge('uploadImage',p);break;
       case 'startCheckout':{
-        const u=await needUser(req);data=await bridge('startCheckout',{productId:String(p.productId||''),userId:u.id});break;
+        const u=await needUser(req);
+        if(!u.discordId)throw Error('Vásárláshoz előbb kösd össze a Discord-fiókodat!');
+        data=await bridge('startCheckout',{productId:String(p.productId||''),userId:u.id});break;
       }
       default:throw Error('Ismeretlen művelet.');
     }
@@ -119,3 +190,6 @@ export default async (req)=>{
     return json({ok:false,error:String(err.message||'Szerverhiba').slice(0,190)},400);
   }
 };
+
+// Imported by the separately deployed Stripe webhook function. This is never exposed to the browser.
+export { bridge };
