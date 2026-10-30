@@ -17,21 +17,6 @@ function verifyStripe(raw, header, secret) {
     return timingSafeEqual(Buffer.from(expected,'hex'),Buffer.from(signature,'hex'));
   });
 }
-function normalizeLink(value) {
-  try {const u=new URL(String(value));return u.origin.toLowerCase()+u.pathname.replace(/\/$/,'')}
-  catch{return ''}
-}
-async function stripePaymentLinkUrl(id) {
-  if(!/^plink_[A-Za-z0-9]+$/.test(String(id||'')))throw Error('Not a Payment Link checkout');
-  const key=process.env.STRIPE_SECRET_KEY;
-  if(!key)throw Error('STRIPE_SECRET_KEY missing');
-  const r=await fetch('https://api.stripe.com/v1/payment_links/'+encodeURIComponent(id),{
-    headers:{authorization:'Bearer '+key}
-  });
-  if(!r.ok)throw Error('Stripe Payment Link verification failed');
-  const link=await r.json();
-  return link.url;
-}
 export default async function(req) {
   if(req.method!=='POST')return result(405,'POST only');
   const secret=process.env.STRIPE_WEBHOOK_SECRET;
@@ -52,12 +37,13 @@ export default async function(req) {
   try {
     const order=await bridge('getOrderForPayment',{orderId});
     if(!order)return result(200,'Unknown order');
-    if(session.currency!=='huf'||Number(session.amount_total)!==Number(order.amountHuf)) {
+    if(session.currency!=='huf'||Number(session.amount_total)!==Number(order.amountHuf)*100) {
       return result(200,'Order amount/currency mismatch');
     }
-    const actualLink=await stripePaymentLinkUrl(session.payment_link);
-    if(!normalizeLink(actualLink)||normalizeLink(actualLink)!==normalizeLink(order.stripePaymentLinkUrl)){
-      return result(200,'Payment Link mismatch');
+    if(order.stripeSessionId!==session.id||session.ui_mode!=='embedded_page'||
+       String(session.metadata?.order_id||'')!==orderId||
+       String(session.metadata?.product_id||'')!==String(order.productId)) {
+      return result(200,'Session/order mismatch');
     }
     await bridge('markOrderPaid',{
       orderId,sessionId:String(session.id),eventId:String(evt.id),
