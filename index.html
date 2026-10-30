@@ -1,0 +1,1387 @@
+
+<!DOCTYPE html>
+<html lang="hu">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>SYNTERX — Elite FiveM Utility</title>
+<meta name="description" content="SYNTERX prémium digitális utility webshop.">
+<link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@500;600;700&family=Space+Grotesk:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --red:#ff2148;
+  --bg:#07070b;
+  --card:#101017;
+  --muted:#9b99a8;
+  --line:#49212c;
+  --white:#f9f6fb;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{
+  margin:0;
+  background:var(--bg);
+  color:var(--white);
+  font-family:'Space Grotesk',sans-serif;
+  overflow-x:hidden;
+}
+button,input,textarea{font:inherit}
+button{cursor:pointer}
+a{color:inherit;text-decoration:none}
+button:disabled{opacity:.5;cursor:not-allowed}
+body:before{
+  content:"";
+  position:fixed;
+  inset:0;
+  pointer-events:none;
+  z-index:-2;
+  background:
+    radial-gradient(ellipse 70% 45% at 85% 10%,#790b293b,transparent),
+    radial-gradient(ellipse 50% 50% at 0 80%,#5e0c2930,transparent),
+    repeating-linear-gradient(0deg,transparent 0 59px,#ffffff04 60px),
+    repeating-linear-gradient(90deg,transparent 0 59px,#ffffff04 60px);
+}
+body:after{
+  content:"";
+  position:fixed;
+  inset:-100%;
+  pointer-events:none;
+  z-index:-1;
+  background:conic-gradient(from 0deg,transparent 0deg,#ff21480b 50deg,transparent 85deg);
+  animation:backgroundTurn 120s linear infinite;
+}
+@keyframes backgroundTurn{
+  to{transform:rotate(360deg)}
+}
+.container{width:min(1180px,calc(100% - 38px));margin:auto}
+.row{display:flex;gap:14px;align-items:center}
+.between{justify-content:space-between}
+.hidden{display:none!important}
+header{
+  position:sticky;
+  top:0;
+  z-index:20;
+  backdrop-filter:blur(20px);
+  background:#09090ede;
+  border-bottom:1px solid #ffffff12;
+}
+.header{
+  height:80px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+.brand{display:flex;align-items:center;gap:12px}
+.brand-icon{
+  width:48px;
+  height:48px;
+  display:grid;
+  place-items:center;
+  background:linear-gradient(145deg,#ff2b50,#4b0015);
+  border:1px solid #ff7788;
+  box-shadow:0 0 32px #ff194a62;
+  clip-path:polygon(20% 0,80% 0,100% 20%,100% 80%,80% 100%,20% 100%,0 80%,0 20%);
+  font:700 24px Rajdhani;
+}
+.brand strong{
+  display:block;
+  font:700 27px Rajdhani;
+  letter-spacing:.16em;
+}
+.brand small{
+  font:700 10px Rajdhani;
+  letter-spacing:.35em;
+  color:var(--red);
+}
+nav{display:flex;gap:30px}
+nav a{
+  font:700 13px Rajdhani;
+  letter-spacing:.13em;
+  color:#d9d6de;
+}
+nav a:hover{color:var(--red)}
+.btn{
+  border:1px solid var(--red);
+  background:var(--red);
+  color:#fff;
+  padding:13px 18px;
+  border-radius:8px;
+  font:700 15px Rajdhani;
+  letter-spacing:.09em;
+  transition:transform .25s,box-shadow .25s,background .25s;
+}
+.btn:hover{
+  transform:translateY(-2px);
+  box-shadow:0 10px 32px #ff214840;
+}
+.btn-outline{background:transparent}
+.btn-ghost{background:#1b111a;border-color:#6b2334}
+.btn-sm{padding:10px 14px;font-size:13px}
+.hero{
+  min-height:680px;
+  display:grid;
+  align-items:center;
+  padding:90px 0 100px;
+  position:relative;
+}
+.hero .container{
+  display:grid;
+  grid-template-columns:1.1fr .9fr;
+  align-items:center;
+  gap:30px;
+}
+.eyebrow{
+  display:inline-flex;
+  align-items:center;
+  gap:12px;
+  font:700 13px Rajdhani;
+  letter-spacing:.23em;
+  color:#ff5472;
+}
+.eyebrow:before{
+  content:"";
+  width:25px;
+  height:2px;
+  background:var(--red);
+}
+h1,h2,h3,p{margin-top:0}
+h1{
+  font:700 clamp(74px,10vw,150px)/.8 Rajdhani;
+  letter-spacing:-.04em;
+  margin:28px 0;
+  text-shadow:0 0 44px #ff14351c;
+}
+h1 span{display:block}
+h1 .stroke{
+  color:transparent;
+  -webkit-text-stroke:2px #ff3156;
+}
+h1 .red{
+  color:var(--red);
+  text-shadow:0 0 50px #ff214875;
+}
+.hero p{
+  max-width:600px;
+  font-size:15px;
+  line-height:1.9;
+  color:#aaa7b2;
+}
+.hero-actions{
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  margin-top:28px;
+}
+.hero-status{
+  margin-top:40px;
+  font:700 12px Rajdhani;
+  letter-spacing:.1em;
+  color:#aaa;
+}
+.hero-status b{color:#5fe8b1}
+.emblem-stage{
+  min-height:470px;
+  position:relative;
+  display:grid;
+  place-items:center;
+  isolation:isolate;
+}
+.orb{
+  position:absolute;
+  width:min(95%,440px);
+  aspect-ratio:1;
+  border:1px solid #ff31553a;
+  border-radius:50%;
+  box-shadow:0 0 80px #df103520,inset 0 0 80px #df10351a;
+  animation:orbit 360s linear infinite;
+}
+.orb:nth-child(2){
+  width:74%;
+  border-style:dashed;
+  animation-duration:480s;
+  animation-direction:reverse;
+}
+.orb:nth-child(3){
+  width:110%;
+  border-color:#631c30;
+  animation-duration:600s;
+}
+@keyframes orbit{
+  to{transform:rotate(360deg)}
+}
+.emblem{
+  width:250px;
+  height:260px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  position:relative;
+  clip-path:polygon(50% 0,94% 17%,94% 78%,50% 100%,6% 78%,6% 17%);
+  background:linear-gradient(135deg,#ff2e57,#6f0d24 44%,#12050d 64%,#c3193f);
+  box-shadow:0 0 90px #fa174659;
+  animation:levitate 130s ease-in-out infinite alternate;
+}
+.emblem:before{
+  content:"";
+  position:absolute;
+  inset:12px;
+  clip-path:inherit;
+  background:linear-gradient(140deg,#25040e,#09090e 60%,#2e0613);
+}
+.emblem span{
+  z-index:1;
+  font:800 145px Rajdhani;
+  letter-spacing:-.16em;
+  padding-right:19px;
+  background:linear-gradient(180deg,#fff,#ff2a52 60%,#810b29);
+  background-clip:text;
+  color:transparent;
+  text-shadow:0 0 35px #ff25502a;
+}
+@keyframes levitate{
+  to{transform:translateY(-7px)}
+}
+.ticker{
+  overflow:hidden;
+  background:#bc1236;
+  border-block:1px solid #ff4463;
+  padding:13px 0;
+}
+.ticker-inner{
+  display:flex;
+  white-space:nowrap;
+  width:max-content;
+  font:800 17px Rajdhani;
+  letter-spacing:.2em;
+  animation:marquee 140s linear infinite;
+}
+.ticker-inner span{margin-right:75px}
+.ticker-inner em{font-style:normal;color:#ffafbf}
+@keyframes marquee{
+  to{transform:translateX(-50%)}
+}
+.section{padding:100px 0}
+.section-title{
+  font:700 clamp(40px,6vw,80px)/.95 Rajdhani;
+  margin:15px 0 44px;
+}
+.section-title span{color:var(--red)}
+.products{
+  display:grid;
+  grid-template-columns:repeat(3,minmax(0,1fr));
+  gap:20px;
+}
+.card{
+  background:linear-gradient(150deg,#171019,#0d0d13);
+  border:1px solid #502131;
+  border-radius:15px;
+  overflow:hidden;
+  transition:transform .35s,box-shadow .35s;
+}
+.card:hover{
+  transform:translateY(-6px);
+  box-shadow:0 16px 65px #9d173226;
+}
+.card-img{
+  height:210px;
+  width:100%;
+  object-fit:cover;
+  background:radial-gradient(circle at center,#541027,#0d0d13);
+}
+.card-content{padding:22px}
+.tag{
+  display:inline-block;
+  border:1px solid #7f2b43;
+  border-radius:3px;
+  color:#ff6982;
+  font:700 10px Rajdhani;
+  letter-spacing:.14em;
+  padding:6px 9px;
+}
+.card h3{font:700 27px Rajdhani;margin:13px 0 8px}
+.card p{
+  font-size:13px;
+  line-height:1.7;
+  color:var(--muted);
+  min-height:65px;
+}
+.price{font:700 27px Rajdhani;color:#ff365b}
+.card-footer{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:8px;
+  margin-top:18px;
+}
+.empty{
+  grid-column:1/-1;
+  color:#a99eaa;
+  padding:35px;
+  text-align:center;
+  border:1px dashed #57243a;
+  border-radius:12px;
+}
+.features{
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:20px;
+}
+.feature{
+  padding:30px;
+  border:1px solid #43202e;
+  background:#121016;
+  border-radius:14px;
+}
+.feature i{
+  font-style:normal;
+  color:var(--red);
+  font-size:35px;
+}
+.feature h3{
+  font:700 23px Rajdhani;
+  margin:20px 0 12px;
+}
+.feature p{
+  line-height:1.8;
+  font-size:13px;
+  color:#aaa;
+}
+.cta{
+  border:1px solid #672437;
+  border-radius:17px;
+  background:linear-gradient(110deg,#270c1a,#0d0d13);
+  padding:54px;
+  margin-bottom:80px;
+}
+.cta h2{
+  font:700 clamp(40px,6vw,80px)/.9 Rajdhani;
+}
+.cta h2 span{color:var(--red)}
+.cta p{color:var(--muted);line-height:1.8}
+footer{
+  border-top:1px solid #311821;
+  padding:32px 0;
+  color:#888;
+  font-size:12px;
+}
+.overlay{
+  position:fixed;
+  inset:0;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:18px;
+  z-index:50;
+  background:#050508e6;
+  backdrop-filter:blur(13px);
+}
+.overlay.open{display:flex}
+.modal{
+  width:min(540px,100%);
+  max-height:92vh;
+  overflow:auto;
+  background:linear-gradient(140deg,#1b1019,#0a0a0f);
+  border:1px solid #90314a;
+  box-shadow:0 25px 110px #000b,0 0 55px #ff21481b;
+  border-radius:16px;
+  padding:28px;
+  position:relative;
+}
+.modal.large{width:min(900px,100%)}
+.modal h2{
+  font:700 39px Rajdhani;
+  margin:10px 0;
+}
+.modal p{
+  color:#ac9ea9;
+  font-size:13px;
+  line-height:1.7;
+}
+.close{
+  position:absolute;
+  right:13px;
+  top:12px;
+  background:transparent;
+  color:#fff;
+  border:0;
+  font-size:28px;
+}
+.tabs{
+  display:flex;
+  border-bottom:1px solid #4c2633;
+  margin:16px 0;
+}
+.tabs button{
+  flex:1;
+  border:0;
+  background:transparent;
+  color:#888;
+  padding:12px;
+  font:700 14px Rajdhani;
+}
+.tabs button.active{
+  color:#ff4569;
+  border-bottom:2px solid #ff2148;
+}
+label{
+  display:block;
+  font-size:12px;
+  color:#c7b4c0;
+  margin:12px 0 7px;
+}
+input,textarea,select{
+  width:100%;
+  background:#0b0b12;
+  color:white;
+  border:1px solid #4b2735;
+  border-radius:8px;
+  padding:13px;
+  outline:none;
+}
+input:focus,textarea:focus,select:focus{
+  border-color:#ff315b;
+  box-shadow:0 0 0 3px #ff204523;
+}
+textarea{min-height:90px;resize:vertical}
+.notice{
+  font-size:12px;
+  color:#ffb6c4;
+  background:#47132255;
+  border:1px solid #ad2a4c;
+  padding:12px;
+  border-radius:8px;
+  line-height:1.7;
+  margin:15px 0;
+}
+.full{width:100%}
+.muted{color:#aaa!important}
+.flex{display:flex;gap:12px;flex-wrap:wrap}
+.flex>*{flex:1}
+.account-actions{
+  display:flex;
+  gap:9px;
+  flex-wrap:wrap;
+  margin:20px 0;
+}
+.admin-list{
+  display:grid;
+  gap:8px;
+  margin:18px 0;
+  max-height:240px;
+  overflow:auto;
+}
+.admin-item{
+  display:flex;
+  justify-content:space-between;
+  gap:10px;
+  align-items:center;
+  padding:12px;
+  border:1px solid #492031;
+  border-radius:8px;
+}
+.admin-item b{font:700 18px Rajdhani}
+.admin-item button{white-space:nowrap}
+.detail-img{
+  width:100%;
+  height:230px;
+  object-fit:cover;
+  border-radius:10px;
+}
+.gallery{
+  display:flex;
+  gap:8px;
+  margin:12px 0;
+  overflow:auto;
+}
+.gallery img{
+  width:110px;
+  height:70px;
+  object-fit:cover;
+  border-radius:5px;
+}
+.toast{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  padding:15px 21px;
+  border:1px solid #b92b50;
+  border-radius:8px;
+  background:#230d19;
+  color:#fff;
+  z-index:100;
+  max-width:min(450px,90vw);
+  box-shadow:0 12px 45px #0009;
+}
+.float-tools{position:fixed;right:16px;bottom:16px;z-index:10}
+.motion-off *,
+.motion-off *:before,
+.motion-off *:after{
+  animation-play-state:paused!important;
+}
+#menu-toggle{display:none}
+@media(max-width:950px){
+  nav{gap:14px}
+  .hero .container{grid-template-columns:1fr}
+  .hero{padding-top:60px}
+  .emblem-stage{min-height:360px}
+  .emblem{width:190px;height:200px}
+  .emblem span{font-size:110px}
+  .products,.features{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:630px){
+  .header{height:70px}
+  nav{
+    display:none;
+    position:absolute;
+    left:0;
+    right:0;
+    top:70px;
+    background:#0d0c12;
+    padding:18px;
+    flex-direction:column;
+    border-bottom:1px solid #6d2339;
+  }
+  nav.show{display:flex}
+  #menu-toggle{display:block}
+  .hero{min-height:0;padding:70px 0 60px}
+  h1{font-size:clamp(64px,16vw,92px)}
+  .section{padding:70px 0}
+  .products,.features{grid-template-columns:1fr}
+  .emblem-stage{min-height:300px}
+  .cta{padding:28px}
+  .modal{padding:20px}
+  .brand strong{font-size:22px}
+  .brand small{font-size:8px}
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container header">
+    <a class="brand" href="#home">
+      <span class="brand-icon">SX</span>
+      <span>
+        <strong>SYNTERX</strong>
+        <small>ELITE SYSTEMS</small>
+      </span>
+    </a>
+    <nav id="nav">
+      <a href="#home">FŐOLDAL</a>
+      <a href="#shop">WEBSHOP</a>
+      <a href="#features">MIÉRT SYNTERX?</a>
+      <a href="#contact">KAPCSOLAT</a>
+    </nav>
+    <div class="row">
+      <button class="btn btn-outline btn-sm" id="account-btn">BEJELENTKEZÉS</button>
+      <button class="btn btn-ghost btn-sm" id="menu-toggle">☰</button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <section id="home" class="hero">
+    <div class="container">
+      <div>
+        <div class="eyebrow">NEXT GENERATION DIGITAL UTILITY</div>
+        <h1>
+          <span>THE BEST</span>
+          <span class="stroke">FIVEM</span>
+          <span class="red">CLEANER.</span>
+        </h1>
+        <p>
+          SYNTERX — prémium digitális utility rendszer.
+          Modern, intuitív felület és erőteljes vizuális élmény.
+          Fedezd fel a webshopot és válaszd ki a megfelelő terméket!
+        </p>
+        <div class="hero-actions">
+          <a href="#shop" class="btn">SHOP NOW ↗</a>
+          <a href="#features" class="btn btn-outline">EXPLORE ↓</a>
+        </div>
+        <div class="hero-status">
+          <b>●</b> SYNTERX COMMAND CENTER ONLINE
+          &nbsp; • &nbsp; ELITE RED EDITION
+        </div>
+      </div>
+      <div class="emblem-stage">
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="orb"></div>
+        <div class="emblem"><span>SX</span></div>
+      </div>
+    </div>
+  </section>
+
+  <div class="ticker">
+    <div class="ticker-inner" id="ticker">
+      <span>
+        SYNTERX <em>✦</em> ELITE SYSTEMS <em>✦</em>
+        PREMIUM EXPERIENCE <em>✦</em> BUILT DIFFERENT <em>✦</em>
+      </span>
+      <span aria-hidden="true">
+        SYNTERX <em>✦</em> ELITE SYSTEMS <em>✦</em>
+        PREMIUM EXPERIENCE <em>✦</em> BUILT DIFFERENT <em>✦</em>
+      </span>
+    </div>
+  </div>
+
+  <section class="section" id="shop">
+    <div class="container">
+      <div class="eyebrow">01 // STORE</div>
+      <h2 class="section-title">
+        EXPLORE THE <span>STORE.</span>
+      </h2>
+      <div class="products" id="products">
+        <div class="empty">Termékek betöltése...</div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section" id="features">
+    <div class="container">
+      <div class="eyebrow">02 // OUR STANDARD</div>
+      <h2 class="section-title">
+        THE SYNTERX <span>EXPERIENCE.</span>
+      </h2>
+      <div class="features">
+        <article class="feature">
+          <i>◈</i>
+          <h3>MODERN INTERFACE</h3>
+          <p>Látványos, reszponzív felület; minden eszközön működő webshop.</p>
+        </article>
+        <article class="feature">
+          <i>⬡</i>
+          <h3>ACCOUNT SYSTEM</h3>
+          <p>Regisztráció, bejelentkezés és saját fiók Google Sheets-adatbázissal.</p>
+        </article>
+        <article class="feature">
+          <i>↗</i>
+          <h3>STRIPE CHECKOUT</h3>
+          <p>Vásárlás a termékhez rendelt Stripe fizetési linken keresztül.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <section class="container" id="contact">
+    <div class="cta">
+      <div class="eyebrow">03 // SYNTERX ELITE</div>
+      <h2>ENTER THE <span>NEXT LEVEL.</span></h2>
+      <p>
+        Kapcsolat:
+        <a id="support" href="mailto:support@example.com">
+          support@example.com
+        </a>
+      </p>
+      <a href="#shop" class="btn">VÁSÁRLÁS ↗</a>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    © <span id="year"></span> SYNTERX •
+    Független márka; nem áll kapcsolatban a FiveM / Cfx.re /
+    Rockstar Games vállalatokkal.
+  </div>
+</footer>
+
+<div class="float-tools">
+  <button class="btn btn-ghost btn-sm" id="motion-btn">
+    ⏸ ANIMÁCIÓK
+  </button>
+</div>
+
+<!-- BEJELENTKEZÉS / REGISZTRÁCIÓ -->
+<div class="overlay" id="auth-modal">
+  <div class="modal">
+    <button class="close" data-close="auth-modal">×</button>
+    <div class="eyebrow">SYNTERX ID</div>
+    <h2 id="auth-title">BEJELENTKEZÉS</h2>
+    <div class="tabs">
+      <button class="active" id="login-tab" type="button">
+        BELÉPÉS
+      </button>
+      <button id="register-tab" type="button">
+        REGISZTRÁCIÓ
+      </button>
+    </div>
+
+    <form id="auth-form">
+      <div id="name-field" class="hidden">
+        <label>Felhasználónév</label>
+        <input id="auth-name" autocomplete="nickname" maxlength="55">
+      </div>
+      <label>E-mail</label>
+      <input id="auth-email" type="email" required autocomplete="email">
+
+      <label>Jelszó</label>
+      <input id="auth-password" type="password"
+             required autocomplete="current-password" minlength="12">
+
+      <div id="register-extra" class="hidden">
+        <div class="notice">
+          ⚠ A SYNTERX-hez olyan egyedi jelszót adj meg,
+          amelyet máshol nem használsz.
+          A jelszót nem olvasható formában tároljuk.
+        </div>
+        <label>Fejlesztői aktiválókód (csak tulajdonosnak)</label>
+        <input id="admin-code" autocomplete="off">
+      </div>
+
+      <div style="height:16px"></div>
+      <button class="btn full" type="submit" id="auth-submit">
+        BEJELENTKEZÉS ↗
+      </button>
+    </form>
+
+    <button class="btn btn-ghost full" style="margin-top:12px"
+            id="forgot-btn">
+      ELFELEJTETT JELSZÓ
+    </button>
+  </div>
+</div>
+
+<!-- FIÓK -->
+<div class="overlay" id="account-modal">
+  <div class="modal">
+    <button class="close" data-close="account-modal">×</button>
+    <div class="eyebrow">SYNTERX MEMBER</div>
+    <h2>SAJÁT FIÓK</h2>
+    <p id="account-summary"></p>
+    <div class="account-actions">
+      <button class="btn" id="open-admin">
+        FEJLESZTŐI PANEL
+      </button>
+      <button class="btn btn-ghost" id="logout-btn">
+        KIJELENTKEZÉS
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- TERMÉK ADATLAP -->
+<div class="overlay" id="detail-modal">
+  <div class="modal">
+    <button class="close" data-close="detail-modal">×</button>
+    <div class="eyebrow">SYNTERX PRODUCT</div>
+    <h2 id="detail-title"></h2>
+    <img id="detail-image" class="detail-img hidden" alt="Termékkép">
+    <div class="gallery" id="detail-gallery"></div>
+    <p id="detail-description"></p>
+    <div class="price" id="detail-price"></div>
+    <div id="detail-features"></div>
+    <div style="height:18px"></div>
+    <button class="btn full" id="buy-btn">
+      MEGVESZEM ↗
+    </button>
+  </div>
+</div>
+
+<!-- FEJLESZTŐI TERMÉKKEZELŐ -->
+<div class="overlay" id="admin-modal">
+  <div class="modal large">
+    <button class="close" data-close="admin-modal">×</button>
+    <div class="eyebrow">SYNTERX DEV ACCESS</div>
+    <h2>DEVELOPER PANEL</h2>
+    <p>Termék létrehozása vagy szerkesztése.</p>
+
+    <button class="btn btn-ghost btn-sm" id="new-product">
+      + ÚJ TERMÉK
+    </button>
+    <div class="admin-list" id="admin-list"></div>
+
+    <form id="product-form">
+      <input type="hidden" id="product-id">
+
+      <div class="flex">
+        <div>
+          <label>Termék neve</label>
+          <input id="p-title" required minlength="3">
+        </div>
+        <div>
+          <label>Ár (Ft)</label>
+          <input id="p-price" type="number"
+                 min="0" step="1" required>
+        </div>
+      </div>
+
+      <label>Rövid alcím</label>
+      <input id="p-subtitle">
+
+      <label>Részletes leírás</label>
+      <textarea id="p-description"></textarea>
+
+      <div class="flex">
+        <div>
+          <label>Kategória</label>
+          <input id="p-category" value="FiveM Utility">
+        </div>
+        <div>
+          <label>Címke</label>
+          <input id="p-badge" placeholder="BEST SELLER">
+        </div>
+      </div>
+
+      <label>Termék jellemzői (soronként)</label>
+      <textarea id="p-features"></textarea>
+
+      <label>Főkép HTTPS linkje</label>
+      <input id="p-image" type="url" placeholder="https://...">
+
+      <label>Galéria HTTPS linkjei (soronként)</label>
+      <textarea id="p-gallery"></textarea>
+
+      <label>Stripe Payment Link</label>
+      <input id="p-stripe" type="url"
+             placeholder="https://buy.stripe.com/...">
+
+      <div class="row" style="margin:15px 0">
+        <label>
+          <input type="checkbox" id="p-active"
+                 checked style="width:auto">
+          AKTÍV
+        </label>
+        <label>
+          <input type="checkbox" id="p-featured"
+                 style="width:auto">
+          KIEMELT
+        </label>
+      </div>
+
+      <div class="flex">
+        <button type="submit" class="btn">
+          TERMÉK MENTÉSE
+        </button>
+        <button type="button" class="btn btn-ghost"
+                id="hide-product">
+          TERMÉK ELREJTÉSE
+        </button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- JELSZÓ VISSZAÁLLÍTÁS -->
+<div class="overlay" id="reset-modal">
+  <div class="modal">
+    <button class="close" data-close="reset-modal">×</button>
+    <div class="eyebrow">SYNTERX ID</div>
+    <h2>ÚJ JELSZÓ</h2>
+    <form id="reset-form">
+      <label>Új jelszó (legalább 12 karakter)</label>
+      <input id="reset-password" type="password"
+             minlength="12" required>
+      <div style="height:18px"></div>
+      <button class="btn full">
+        JELSZÓ MEGVÁLTOZTATÁSA
+      </button>
+    </form>
+  </div>
+</div>
+
+<div class="toast hidden" id="toast" role="status"></div>
+
+<script>
+const $ = s => document.querySelector(s);
+let account = null;
+let items = [];
+let chosen = null;
+let adminItems = [];
+let registerMode = false;
+
+// Netlify API — nem Google Apps Script direkt hívás.
+const apiUrl = '/.netlify/functions/api';
+
+const formatHuf = v =>
+  new Intl.NumberFormat('hu-HU', {
+    style: 'currency',
+    currency: 'HUF',
+    maximumFractionDigits: 0
+  }).format(Number(v) || 0);
+
+const esc = s =>
+  String(s ?? '').replace(/[&<>"']/g, c => ({
+    '&': '&amp;',
+    '<': '&lt;',
+    '>': '&gt;',
+    '"': '&quot;',
+    "'": '&#39;'
+  }[c]));
+
+function toast(message) {
+  const box = $('#toast');
+  box.textContent = message;
+  box.classList.remove('hidden');
+  clearTimeout(toast.timer);
+  toast.timer = setTimeout(() => box.classList.add('hidden'), 5000);
+}
+
+async function api(action, payload = {}) {
+  const res = await fetch(apiUrl, {
+    method: 'POST',
+    credentials: 'same-origin',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({ action, payload })
+  });
+  const data = await res.json();
+  if (!res.ok || !data.ok) {
+    throw Error(data.error || 'API hiba');
+  }
+  return data.data;
+}
+
+function show(id) {
+  $('#' + id).classList.add('open');
+}
+
+function hide(id) {
+  $('#' + id).classList.remove('open');
+}
+
+async function refreshAccount() {
+  try {
+    const r = await api('me');
+    account = r.user;
+  } catch {
+    account = null;
+  }
+
+  $('#account-btn').textContent =
+    account ? (account.displayName || 'FIÓKOM') : 'BEJELENTKEZÉS';
+
+  $('#open-admin').classList.toggle(
+    'hidden',
+    !account || account.role !== 'developer'
+  );
+
+  $('#account-summary').textContent = account
+    ? `${account.displayName} • ${account.email} • ${account.role}`
+    : '';
+}
+
+function showAuth() {
+  if (account) {
+    show('account-modal');
+  } else {
+    show('auth-modal');
+  }
+}
+
+function authMode(mode) {
+  registerMode = mode === 'register';
+  $('#auth-title').textContent =
+    registerMode ? 'REGISZTRÁCIÓ' : 'BEJELENTKEZÉS';
+
+  $('#name-field').classList.toggle('hidden', !registerMode);
+  $('#register-extra').classList.toggle('hidden', !registerMode);
+  $('#auth-name').required = registerMode;
+  $('#auth-password').autocomplete =
+    registerMode ? 'new-password' : 'current-password';
+
+  $('#auth-submit').textContent =
+    registerMode ? 'FIÓK LÉTREHOZÁSA ↗' : 'BEJELENTKEZÉS ↗';
+
+  $('#login-tab').classList.toggle('active', !registerMode);
+  $('#register-tab').classList.toggle('active', registerMode);
+}
+
+async function submitAuth(e) {
+  e.preventDefault();
+
+  const payload = {
+    email: $('#auth-email').value,
+    password: $('#auth-password').value
+  };
+
+  if (registerMode) {
+    payload.displayName = $('#auth-name').value;
+    payload.adminCode = $('#admin-code').value;
+  }
+
+  const btn = $('#auth-submit');
+  btn.disabled = true;
+
+  try {
+    const d = await api(
+      registerMode ? 'register' : 'login',
+      payload
+    );
+
+    account = d.user;
+    await refreshAccount();
+    hide('auth-modal');
+
+    toast('Sikeres ' +
+      (registerMode ? 'regisztráció' : 'bejelentkezés') + '!');
+  } catch (e) {
+    toast(e.message);
+  } finally {
+    btn.disabled = false;
+  }
+}
+
+async function loadStore() {
+  try {
+    const d = await api('getStorefront');
+    items = d.products || [];
+
+    const email = d.store?.supportEmail;
+    if (email) {
+      $('#support').href = 'mailto:' + email;
+      $('#support').textContent = email;
+    }
+
+    renderProducts();
+  } catch (e) {
+    $('#products').innerHTML =
+      '<div class="empty">Az API jelenleg nem elérhető. ' +
+      'Ellenőrizd a Netlify beállításokat.</div>';
+
+    toast(e.message);
+  }
+}
+
+function renderProducts() {
+  const root = $('#products');
+
+  if (!items.length) {
+    root.innerHTML =
+      '<div class="empty">A termékek hamarosan érkeznek. ' +
+      'A fejlesztői panelen tudsz hozzáadni.</div>';
+    return;
+  }
+
+  root.innerHTML = items.map(p => `
+    <article class="card">
+      <img class="card-img"
+           src="${esc(p.imageUrl || 'https://placehold.co/900x550/150c15/ff2148?text=SYNTERX')}"
+           alt="">
+      <div class="card-content">
+        <span class="tag">
+          ${esc(p.badge || p.category || 'SYNTERX')}
+        </span>
+        <h3>${esc(p.title)}</h3>
+        <p>${esc(p.subtitle || p.description || 'SYNTERX digitális termék')}</p>
+        <div class="card-footer">
+          <span class="price">${formatHuf(p.priceHuf)}</span>
+          <button class="btn btn-sm"
+                  data-detail="${esc(p.id)}">
+            RÉSZLETEK ↗
+          </button>
+        </div>
+      </div>
+    </article>
+  `).join('');
+
+  root.querySelectorAll('[data-detail]').forEach(b => {
+    b.onclick = () => detail(b.dataset.detail);
+  });
+}
+
+function detail(id) {
+  chosen = items.find(p => p.id === id);
+  if (!chosen) return;
+
+  $('#detail-title').textContent = chosen.title;
+  $('#detail-description').textContent =
+    chosen.description || chosen.subtitle || '';
+
+  $('#detail-price').textContent =
+    formatHuf(chosen.priceHuf);
+
+  const img = $('#detail-image');
+  img.classList.toggle('hidden', !chosen.imageUrl);
+
+  if (chosen.imageUrl) {
+    img.src = chosen.imageUrl;
+  }
+
+  $('#detail-gallery').innerHTML =
+    (chosen.galleryUrls || [])
+      .map(url => `<img src="${esc(url)}" alt="Termékfotó">`)
+      .join('');
+
+  $('#detail-features').innerHTML =
+    (chosen.features || [])
+      .map(f => `<p style="margin:5px 0;color:#ff7991">
+        ✓ ${esc(f)}
+      </p>`)
+      .join('');
+
+  show('detail-modal');
+}
+
+async function buy() {
+  if (!chosen) return;
+
+  if (!account) {
+    hide('detail-modal');
+    authMode('login');
+    show('auth-modal');
+    toast('Vásárláshoz jelentkezz be.');
+    return;
+  }
+
+  try {
+    const d = await api('startCheckout', {
+      productId: chosen.id
+    });
+
+    if (!/^https:\/\/(buy|checkout)\.stripe\.com\//.test(d.stripeUrl)) {
+      throw Error('Érvénytelen Stripe link.');
+    }
+
+    window.open(d.stripeUrl, '_blank', 'noopener,noreferrer');
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+const lines = s =>
+  String(s || '')
+    .split(/\n|\|/)
+    .map(x => x.trim())
+    .filter(Boolean);
+
+function resetProduct() {
+  const f = $('#product-form');
+  f.reset();
+  $('#product-id').value = '';
+  $('#p-active').checked = true;
+  $('#p-category').value = 'FiveM Utility';
+}
+
+async function loadAdmin() {
+  if (account?.role !== 'developer') return;
+
+  show('admin-modal');
+
+  try {
+    adminItems = await api('getAdminProducts');
+
+    $('#admin-list').innerHTML = adminItems.map(p => `
+      <div class="admin-item">
+        <span>
+          <b>${esc(p.title)}</b>
+          <br>
+          ${formatHuf(p.priceHuf)}
+          • ${p.active ? 'Aktív' : 'Rejtett'}
+        </span>
+        <button class="btn btn-ghost btn-sm"
+                data-edit="${esc(p.id)}">
+          SZERKESZTÉS
+        </button>
+      </div>
+    `).join('') || '<p>Még nincs termék.</p>';
+
+    $('#admin-list').querySelectorAll('[data-edit]').forEach(b => {
+      b.onclick = () => editProduct(b.dataset.edit);
+    });
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+function editProduct(id) {
+  const p = adminItems.find(x => x.id === id);
+  if (!p) return;
+
+  $('#product-id').value = p.id;
+
+  for (const [key, value] of [
+    ['title', p.title],
+    ['price', p.priceHuf],
+    ['subtitle', p.subtitle],
+    ['description', p.description],
+    ['category', p.category],
+    ['badge', p.badge],
+    ['image', p.imageUrl],
+    ['stripe', p.stripeUrl]
+  ]) {
+    $('#p-' + key).value = value ?? '';
+  }
+
+  $('#p-features').value =
+    (p.features || []).join('\n');
+
+  $('#p-gallery').value =
+    (p.galleryUrls || []).join('\n');
+
+  $('#p-active').checked = p.active;
+  $('#p-featured').checked = p.featured;
+
+  $('#product-form').scrollIntoView({
+    behavior: 'smooth',
+    block: 'start'
+  });
+}
+
+async function saveProduct(e) {
+  e.preventDefault();
+
+  const p = {
+    id: $('#product-id').value,
+    title: $('#p-title').value,
+    priceHuf: Number($('#p-price').value),
+    subtitle: $('#p-subtitle').value,
+    description: $('#p-description').value,
+    category: $('#p-category').value,
+    badge: $('#p-badge').value,
+    features: lines($('#p-features').value).join('|'),
+    imageUrl: $('#p-image').value,
+    galleryUrls: lines($('#p-gallery').value).join('|'),
+    stripeUrl: $('#p-stripe').value,
+    active: $('#p-active').checked,
+    featured: $('#p-featured').checked
+  };
+
+  try {
+    await api('saveProduct', p);
+    toast('Termék elmentve.');
+    await loadAdmin();
+    await loadStore();
+    resetProduct();
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+async function hideProduct() {
+  const id = $('#product-id').value;
+
+  if (!id) {
+    return toast('Előbb válassz ki egy terméket.');
+  }
+
+  if (!confirm('Biztosan elrejted a terméket?')) {
+    return;
+  }
+
+  try {
+    await api('deleteProduct', { id });
+    toast('Termék elrejtve.');
+    resetProduct();
+    await loadAdmin();
+    await loadStore();
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+function startReset() {
+  const q = new URLSearchParams(location.search);
+
+  if (q.has('reset') && q.has('email')) {
+    show('reset-modal');
+  }
+}
+
+async function resetPassword(e) {
+  e.preventDefault();
+
+  const q = new URLSearchParams(location.search);
+
+  try {
+    const d = await api('resetPassword', {
+      email: q.get('email'),
+      token: q.get('reset'),
+      password: $('#reset-password').value
+    });
+
+    toast(d.message);
+    hide('reset-modal');
+    history.replaceState({}, '', location.pathname);
+    authMode('login');
+    show('auth-modal');
+  } catch (e) {
+    toast(e.message);
+  }
+}
+
+window.addEventListener('DOMContentLoaded', async () => {
+  $('#year').textContent = new Date().getFullYear();
+
+  $('#account-btn').onclick = showAuth;
+
+  $('#menu-toggle').onclick =
+    () => $('#nav').classList.toggle('show');
+
+  document.querySelectorAll('nav a').forEach(a => {
+    a.onclick = () => $('#nav').classList.remove('show');
+  });
+
+  document.querySelectorAll('[data-close]').forEach(b => {
+    b.onclick = () => hide(b.dataset.close);
+  });
+
+  document.querySelectorAll('.overlay').forEach(m => {
+    m.onclick = e => {
+      if (e.target === m) hide(m.id);
+    };
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      document.querySelectorAll('.overlay.open')
+        .forEach(m => hide(m.id));
+    }
+  });
+
+  $('#motion-btn').onclick = () => {
+    document.body.classList.toggle('motion-off');
+    $('#motion-btn').textContent =
+      document.body.classList.contains('motion-off')
+        ? '▶ ANIMÁCIÓK'
+        : '⏸ ANIMÁCIÓK';
+  };
+
+  $('#login-tab').onclick = () => authMode('login');
+  $('#register-tab').onclick = () => authMode('register');
+  $('#auth-form').onsubmit = submitAuth;
+  $('#buy-btn').onclick = buy;
+
+  $('#forgot-btn').onclick = async () => {
+    const email = $('#auth-email').value.trim();
+
+    if (!email) {
+      return toast('Írd be az e-mail címedet!');
+    }
+
+    try {
+      const d = await api('requestReset', { email });
+      toast(d.message);
+    } catch (e) {
+      toast(e.message);
+    }
+  };
+
+  $('#logout-btn').onclick = async () => {
+    try {
+      await api('logout');
+      account = null;
+      await refreshAccount();
+      hide('account-modal');
+      toast('Kijelentkeztél.');
+    } catch (e) {
+      toast(e.message);
+    }
+  };
+
+  $('#open-admin').onclick = () => {
+    hide('account-modal');
+    loadAdmin();
+  };
+
+  $('#new-product').onclick = resetProduct;
+  $('#product-form').onsubmit = saveProduct;
+  $('#hide-product').onclick = hideProduct;
+  $('#reset-form').onsubmit = resetPassword;
+
+  startReset();
+  await Promise.all([refreshAccount(), loadStore()]);
+});
+</script>
+</body>
+</html>
