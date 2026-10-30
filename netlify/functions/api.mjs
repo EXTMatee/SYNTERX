@@ -176,10 +176,59 @@ export default async (req)=>{
       case 'saveProduct':await needUser(req,true);data=await bridge('saveProduct',p);break;
       case 'deleteProduct':await needUser(req,true);data=await bridge('hideProduct',{id:p.id});break;
       case 'uploadProductImage':await needUser(req,true);data=await bridge('uploadImage',p);break;
-      case 'startCheckout':{
+      case 'createEmbeddedCheckout':{
         const u=await needUser(req);
-        if(!u.discordId)throw Error('Vásárláshoz előbb kösd össze a Discord-fiókodat!');
-        data=await bridge('startCheckout',{productId:String(p.productId||''),userId:u.id});break;
+        if(!/^\d{15,22}$/.test(String(u.discordId||'')))throw Error('Vásárláshoz Discord-összekapcsolás szükséges.');
+        const publishableKey=required('STRIPE_PUBLISHABLE_KEY');
+        const secretKey=required('STRIPE_SECRET_KEY');
+        if(!/^pk_(?:test|live)_[A-Za-z0-9]+$/.test(publishableKey)||
+           !/^sk_(?:test|live)_[A-Za-z0-9]+$/.test(secretKey)||
+           publishableKey.split('_')[1]!==secretKey.split('_')[1]){
+          throw Error('A Stripe API-kulcsok hibásak vagy eltérő környezethez tartoznak.');
+        }
+        const order=await bridge('prepareEmbeddedCheckout',{productId:String(p.productId||''),userId:u.id});
+        // Stripe HUF charge amounts use 2 minor-unit digits: 9990 HUF -> unit_amount 999000.
+        const amountMinor=order.amountHuf*100;
+        if(!Number.isSafeInteger(amountMinor)||amountMinor<17500)throw Error('Hibás Stripe összeg.');
+        const form=new URLSearchParams({
+          mode:'payment',ui_mode:'embedded_page',redirect_on_completion:'if_required',
+          return_url:new URL('/?checkout_session_id={CHECKOUT_SESSION_ID}',req.url).href,
+          client_reference_id:order.orderId,
+          customer_email:order.email,
+          'metadata[order_id]':order.orderId,
+          'metadata[product_id]':order.productId,
+          'line_items[0][price_data][currency]':'huf',
+          'line_items[0][price_data][unit_amount]':String(amountMinor),
+          'line_items[0][price_data][product_data][name]':order.title.slice(0,100),
+          'line_items[0][quantity]':'1'
+        });
+        const stripeRes=await fetch('https://api.stripe.com/v1/checkout/sessions',{
+          method:'POST',headers:{authorization:'Bearer '+secretKey,'content-type':'application/x-www-form-urlencoded'},
+          body:form
+        });
+        const session=await stripeRes.json();
+        if(!stripeRes.ok||!session.id||!session.client_secret){
+          console.error('Stripe session failed:',String(session.error?.code||stripeRes.status));
+          throw Error('Nem sikerült a Stripe fizetési panel létrehozása.');
+        }
+        await bridge('attachCheckoutSession',{orderId:order.orderId,sessionId:session.id,userId:u.id});
+        data={clientSecret:session.client_secret,publishableKey,sessionId:session.id,orderId:order.orderId};
+        break;
+      }
+      case 'getCheckoutStatus':{
+        const u=await needUser(req);
+        const sessionId=String(p.sessionId||'');
+        if(!/^cs_(?:test_|live_)?[A-Za-z0-9]+$/.test(sessionId))throw Error('Érvénytelen fizetési azonosító.');
+        const stripeRes=await fetch('https://api.stripe.com/v1/checkout/sessions/'+encodeURIComponent(sessionId),{
+          headers:{authorization:'Bearer '+required('STRIPE_SECRET_KEY')}
+        });
+        if(!stripeRes.ok)throw Error('A fizetés ellenőrzése nem sikerült.');
+        const session=await stripeRes.json();
+        const order=await bridge('getOrderForPayment',{orderId:session.client_reference_id});
+        if(!order||order.userId!==u.id||order.stripeSessionId!==session.id)throw Error('Ehhez a fizetéshez nincs jogosultságod.');
+        data={orderId:order.id,paymentStatus:order.paymentStatus,stripePaymentStatus:session.payment_status,
+          completed:session.status==='complete'};
+        break;
       }
       default:throw Error('Ismeretlen művelet.');
     }
