@@ -49,13 +49,30 @@
     .brand .mark.custom-mark:before,.brand .mark.custom-mark:after{display:none}
     .brand .mark.custom-mark img{width:54px;height:54px;max-width:none;object-fit:contain;filter:drop-shadow(0 0 10px rgba(255,36,71,.5))}
     @media(max-width:650px){.brand .mark.custom-mark,.brand .mark.custom-mark img{width:43px;height:43px}}
+    /* SYNTERX V5: motion OFF by default. Optional cinematic motion, never aggressive. */
+    body:not(.sx-motion-active) .ticker-track,
+    body:not(.sx-motion-active) .orbit,
+    body:not(.sx-motion-active) .hero-emblem,
+    body:not(.sx-motion-active) .art-chip,
+    body:not(.sx-motion-active) .dot {animation:none!important;transform:none!important}
+    .sx-support-card{display:flex;align-items:center;justify-content:space-between;gap:28px;padding:36px;border-radius:20px;border:1px solid rgba(255,36,71,.32);background:linear-gradient(135deg,#27101d,#100c15);box-shadow:0 18px 70px #0005}
+    .sx-support-card h3{font:700 35px 'Rajdhani',sans-serif;margin:15px 0}.sx-support-card p{font:400 14px/1.9 'DM Sans',sans-serif;color:#c5b7c0;max-width:690px}
+    .sx-support-card a[aria-disabled="true"]{opacity:.45;pointer-events:none;cursor:not-allowed}
+    .sx-install-note{background:rgba(131,18,47,.11);border:1px solid rgba(255,36,71,.32);border-radius:11px;padding:16px;margin:20px 0}
+    .sx-install-note strong{color:#ff7796;font:700 16px 'Rajdhani',sans-serif;letter-spacing:.1em}
+    .sx-install-note p{color:#c4bbc2;font:400 12px/1.8 'DM Sans',sans-serif;margin:8px 0 0}
+    #link-discord{margin:12px 0}.sx-orders-title{font:700 25px 'Rajdhani',sans-serif;margin-top:25px;color:#ff6988}
+    .sx-orders{max-height:340px;overflow:auto;display:grid;gap:10px;margin:12px 0 30px}
+    .sx-order{padding:14px;border-radius:9px;background:#101019;border:1px solid #542033;font:400 12px/1.8 'DM Sans',sans-serif;overflow-wrap:anywhere}
+    .sx-order b{color:#fff}.sx-order .paid{color:#6ee7a1}.sx-order .pending{color:#ffc58d}
+    @media(max-width:760px){.sx-support-card{flex-direction:column;align-items:flex-start;padding:23px}.sx-support-card .btn{white-space:normal}}
   </style>
 </head>
 <body>
   <canvas id="ambient" aria-hidden="true"></canvas><div class="grain" aria-hidden="true"></div>
   <header class="nav"><div class="container nav-inner">
     <a class="brand" href="#home" aria-label="SYNTERX kezdőlap"><div class="mark custom-mark"><img src="logo.png" alt="SYNTERX logó" loading="eager"></div><div><span class="brand-title">SYNTERX</span><span class="brand-sub">ELITE SYSTEMS</span></div></a>
-    <nav class="nav-links" id="nav-links"><a href="#home">FŐOLDAL</a><a href="#shop">WEBSHOP</a><a href="#features">MIÉRT SYNTERX?</a><a href="#faq">GYIK</a><a href="#footer">KAPCSOLAT</a></nav>
+    <nav class="nav-links" id="nav-links"><a href="#home">FŐOLDAL</a><a href="#shop">WEBSHOP</a><a href="#features">MIÉRT SYNTERX?</a><a href="#faq">GYIK</a><a href="#contact">KAPCSOLAT</a></nav>
     <div class="nav-actions"><button class="btn btn-outline btn-small" id="account-btn" type="button">BEJELENTKEZÉS ↗</button><button class="hamburger" id="mobile-toggle" aria-label="Menü megnyitása" type="button">☰</button></div>
   </div></header>
 
@@ -63,11 +80,11 @@
     <section class="hero" id="home"><div class="hero-grid"></div><span class="hero-side">BUILT DIFFERENT // SYNTERX © 2026</span>
       <div class="container hero-inner">
         <div class="hero-copy">
-          <div class="status-chip"><i class="dot"></i> NEXT GENERATION DIGITAL UTILITY <span class="sx-build-label">· CINEMATIC MOTION</span></div>
+          <div class="status-chip"><i class="dot"></i> NEXT GENERATION DIGITAL UTILITY <span class="sx-build-label">· MOTION OFF · V5</span></div>
           <h1><span class="line">THE BEST</span><span class="line outlined">FIVEM</span><span class="line glow">CLEANER.</span></h1>
           <p>A SYNTERX egy új generációs, prémium digitális utility márka. Egy helyen az eszközök, letisztult kezelés, magabiztos megjelenés. Ismerd meg a kínálatot és válaszd ki a hozzád illő csomagot.</p>
           <div class="hero-cta"><a href="#shop" class="btn btn-primary">TERMÉKEK MEGTEKINTÉSE <span>↗</span></a><a href="#features" class="btn btn-outline">FEDEZD FEL <span>↓</span></a></div>
-          <div class="hero-bottom"><span><b>✦</b> PREMIUM DESIGN</span><span><b>⌁</b> DIGITAL ACCESS</span><span><b>◈</b> STRIPE CHECKOUT</span><button id="sx-motion-toggle" type="button" class="sx-motion-toggle" aria-pressed="false">⏸ MOZGÁS SZÜNETELTETÉSE</button></div>
+          <div class="hero-bottom"><span><b>✦</b> PREMIUM DESIGN</span><span><b>⌁</b> DIGITAL ACCESS</span><span><b>◈</b> STRIPE CHECKOUT</span><button id="sx-motion-toggle" type="button" class="sx-motion-toggle" aria-pressed="false">▶ LASSÚ MOZGÁS BEKAPCSOLÁSA</button></div>
         </div>
         <div class="hero-art" aria-label="SYNTERX SX neon embléma">
           <div class="orbit"></div><div class="orbit"></div><div class="orbit"></div>
@@ -93,13 +110,14 @@
   STORE     : <b>AVAILABLE</b>
 
   <em>synterx&gt;</em> ready_</pre><div class="terminal-foot"><span>● INTERFACE PREVIEW</span><span>◦ POWERED BY SYNTERX</span></div></div></div></div></section>
-    <section class="section" id="faq"><div class="container"><div class="section-heading reveal"><div><div class="eyebrow">04 / QUESTIONS</div><h2>NEED <span class="text-red">ANSWERS?</span></h2></div><p>Legfontosabb információk a fiókról, vásárlásról és termékeinkről.</p></div><div class="faq"><div class="faq-item"><button class="faq-q" type="button" aria-expanded="false">Hogyan tudok vásárolni?<b>+</b></button><div class="faq-a">Regisztrálj, jelentkezz be, majd a kiválasztott terméknél kattints a vásárlásra. A fizetés a Stripe oldalán zajlik. Egyes termékek fizetési linkje még nem aktív.</div></div><div class="faq-item"><button class="faq-q" type="button" aria-expanded="false">Biztonságos a fizetés?<b>+</b></button><div class="faq-a">A kártyaadatokat nem ez a weboldal kezeli: a vásárlás a Stripe által üzemeltetett fizetési oldalon történik. Megrendelés státuszát csak hitelesített Stripe visszaigazolás alapján szabad teljesítettnek tekinteni.</div></div><div class="faq-item"><button class="faq-q" type="button" aria-expanded="false">Mi történik a regisztrációkor?<b>+</b></button><div class="faq-a">A regisztrációt a SYNTERX API kezeli. Az e-mail cím és a profil a Google Sheets adatbázisba kerül, a jelszó csak sózott, egyirányú kivonatként tárolódik. Jelenleg nincs e-mail-megerősítés.</div></div><div class="faq-item"><button class="faq-q" type="button" aria-expanded="false">Hogyan kérhetek segítséget?<b>+</b></button><div class="faq-a">A weboldal láblécében található támogatási e-mail címen keresztül. Vásárlási problémánál add meg a Stripe fizetéshez használt e-mail címet és a vásárlás idejét.</div></div></div></div></section>
+    <section class="section" id="faq"><div class="container"><div class="section-heading reveal"><div><div class="eyebrow">04 / QUESTIONS</div><h2>NEED <span class="text-red">ANSWERS?</span></h2></div><p>Legfontosabb információk a fiókról, vásárlásról és termékeinkről.</p></div><div class="faq"><div class="faq-item"><button class="faq-q" type="button" aria-expanded="false">Hogyan tudok vásárolni?<b>+</b></button><div class="faq-a">Regisztrálj vagy jelentkezz be, majd a profilodban kösd össze a Discord-fiókodat. Csak ezek után lesz aktív a Megveszem gomb, ha a termék fizethető. Fizetés a Stripe oldalán.</div></div><div class="faq-item"><button class="faq-q" type="button" aria-expanded="false">Biztonságos a fizetés?<b>+</b></button><div class="faq-a">A kártyaadatokat nem ez a weboldal kezeli: a vásárlás a Stripe által üzemeltetett fizetési oldalon történik. Megrendelés státuszát csak hitelesített Stripe visszaigazolás alapján szabad teljesítettnek tekinteni.</div></div><div class="faq-item"><button class="faq-q" type="button" aria-expanded="false">Mi történik a regisztrációkor?<b>+</b></button><div class="faq-a">A regisztrációt a SYNTERX API kezeli. Az e-mail cím és a profil a Google Sheets adatbázisba kerül, a jelszó csak sózott, egyirányú kivonatként tárolódik. Jelenleg nincs e-mail-megerősítés.</div></div><div class="faq-item"><button class="faq-q" type="button" aria-expanded="false">Hogyan történik a telepítés?<b>+</b></button><div class="faq-a">A fizetés után csatlakozz a SYNTERX Discord-szerverére, nyiss egy <strong>Support / Installation ticketet</strong>, majd a fejlesztők egyeztetett időpontban AnyDesk segítségével beállítják a programot. A távoli hozzáféréshez a felhasználó hozzájárulása szükséges.</div></div><div class="faq-item"><button class="faq-q" type="button" aria-expanded="false">Hogyan kérhetek segítséget?<b>+</b></button><div class="faq-a">A Kapcsolat fülön keresztül csatlakozz a Discord-szerverhez, és nyiss support ticketet. A Discord fiókodat a SYNTERX-profilban külön kell összekapcsolnod.</div></div></div></div></section>
+    <section class="section" id="contact"><div class="container"><div class="section-heading reveal"><div><div class="eyebrow">05 / CUSTOMER SUPPORT</div><h2>KAPCSOLAT <span class="text-red">DISCORDON.</span></h2></div><p>A SYNTERX ügyfélszolgálata Discord ticketen keresztül érhető el. A részletes GYIK külön található.</p></div><div class="sx-support-card"><div><div class="eyebrow">TICKET SUPPORT</div><h3>SEGÍTSÉGRE VAN SZÜKSÉGED?</h3><p>Csatlakozz a Discord-szerverünkre, majd nyiss egy <strong>Support / Installation</strong> ticketet. A vásárlás után a fejlesztők egyeztetett időpontban <strong>AnyDesk-en keresztül</strong> segítenek a telepítésben. A távoli hozzáféréshez mindig a te kifejezett beleegyezésed szükséges; bármikor megszakíthatod.</p></div><a class="btn btn-primary" id="discord-server-link" target="_blank" rel="noopener noreferrer" aria-disabled="true">DISCORD SZERVER / TICKET ↗</a></div></div></section>
   </main>
 
-  <footer id="footer"><div class="container"><div class="footer-top"><div><div class="brand"><div class="mark custom-mark"><img src="logo.png" alt="SYNTERX logó" loading="eager"></div><div><span class="brand-title">SYNTERX</span><span class="brand-sub">ELITE SYSTEMS</span></div></div><p style="color:var(--muted);font:400 12px/1.8 'DM Sans';max-width:300px;margin-top:18px">Digitális utility márka. Modern felület. Erőteljes karakter. Saját tempó.</p></div><div class="footer-right"><a href="#home">FŐOLDAL</a><a href="#shop">WEBSHOP</a><a href="#faq">GYIK</a><a id="support-link" href="mailto:support@example.com">KAPCSOLAT</a></div></div><div class="footer-bottom"><span>© <span id="year"></span> SYNTERX. Minden jog fenntartva.</span><span>A SYNTERX független márka; nem áll kapcsolatban a FiveM / Cfx.re / Rockstar Games vállalatokkal.</span></div></div></footer>
+  <footer id="footer"><div class="container"><div class="footer-top"><div><div class="brand"><div class="mark custom-mark"><img src="logo.png" alt="SYNTERX logó" loading="eager"></div><div><span class="brand-title">SYNTERX</span><span class="brand-sub">ELITE SYSTEMS</span></div></div><p style="color:var(--muted);font:400 12px/1.8 'DM Sans';max-width:300px;margin-top:18px">Digitális utility márka. Modern felület. Erőteljes karakter. Saját tempó.</p></div><div class="footer-right"><a href="#home">FŐOLDAL</a><a href="#shop">WEBSHOP</a><a href="#faq">GYIK</a><a href="#contact">KAPCSOLAT</a></div></div><div class="footer-bottom"><span>© <span id="year"></span> SYNTERX. Minden jog fenntartva.</span><span>A SYNTERX független márka; nem áll kapcsolatban a FiveM / Cfx.re / Rockstar Games vállalatokkal.</span></div></div></footer>
 
   <!-- Product details modal -->
-  <div class="overlay" id="product-overlay" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="detail-title"><button class="modal-close" data-close="product-overlay" aria-label="Bezárás">×</button><div class="eyebrow">SYNTERX / PRODUCT DETAILS</div><h2 id="detail-title" style="margin-top:18px">TERMÉK</h2><div id="detail-price" style="font:700 28px 'Rajdhani';color:#ff4363"></div><img id="detail-cover" class="detail-cover" alt="Termék képe" hidden><div id="detail-gallery" class="gallery-grid"></div><p id="detail-description" class="detail-desc"></p><div id="detail-features" style="padding:16px 0"></div><button id="detail-buy" type="button" class="btn btn-primary full-btn">MEGVESZEM ↗</button></div></div>
+  <div class="overlay" id="product-overlay" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="detail-title"><button class="modal-close" data-close="product-overlay" aria-label="Bezárás">×</button><div class="eyebrow">SYNTERX / PRODUCT DETAILS</div><h2 id="detail-title" style="margin-top:18px">TERMÉK</h2><div id="detail-price" style="font:700 28px 'Rajdhani';color:#ff4363"></div><img id="detail-cover" class="detail-cover" alt="Termék képe" hidden><div id="detail-gallery" class="gallery-grid"></div><p id="detail-description" class="detail-desc"></p><div id="detail-features" style="padding:16px 0"></div><div class="sx-install-note"><strong>TELEPÍTÉS / ANYDESK</strong><p>Vásárlás után a Discord szerverünkön nyiss <b>Installation ticketet</b>. A fejlesztők veled egyeztetve, AnyDesk segítségével állítják be a terméket. A távoli hozzáférés csak a hozzájárulásoddal történik.</p></div><p id="purchase-hint" class="muted" style="font-size:12px"></p><button id="detail-buy" type="button" class="btn btn-primary full-btn">MEGVESZEM ↗</button></div></div>
 
   <!-- Authentication modal -->
   <div class="overlay" id="auth-overlay" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="auth-title"><button class="modal-close" data-close="auth-overlay" aria-label="Bezárás">×</button><div class="modal-logo"><div class="mark custom-mark"><img src="logo.png" alt="SYNTERX logó" loading="eager"></div><span style="font:700 22px 'Rajdhani';letter-spacing:.13em">SYNTERX <span class="text-red">ID</span></span></div><h2 id="auth-title">WELCOME BACK.</h2><p class="modal-desc">Lépj be a saját SYNTERX fiókodba.</p><div class="tabs"><button type="button" class="tab active" id="tab-login">BEJELENTKEZÉS</button><button type="button" class="tab" id="tab-register">REGISZTRÁCIÓ</button></div>
@@ -108,10 +126,10 @@
   </div></div>
 
   <!-- Account modal -->
-  <div class="overlay" id="account-overlay" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="account-title"><button class="modal-close" data-close="account-overlay" aria-label="Bezárás">×</button><div class="eyebrow">SYNTERX ACCOUNT</div><h2 id="account-title" style="margin-top:20px">MY PROFILE.</h2><div class="account-info"><p><span>Név:</span> <strong id="profile-name">-</strong></p><p><span>E-mail:</span> <strong id="profile-email">-</strong></p><p><span>Fiók állapota:</span> <strong id="profile-verified">-</strong></p><p><span>Jogosultság:</span> <strong id="profile-role">CUSTOMER</strong></p></div><button class="btn btn-primary full-btn" type="button" id="admin-open" hidden>FEJLESZTŐI PANEL ↗</button><button class="btn btn-outline full-btn" style="margin-top:11px" type="button" id="logout-btn">KIJELENTKEZÉS</button></div></div>
+  <div class="overlay" id="account-overlay" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="account-title"><button class="modal-close" data-close="account-overlay" aria-label="Bezárás">×</button><div class="eyebrow">SYNTERX ACCOUNT</div><h2 id="account-title" style="margin-top:20px">MY PROFILE.</h2><div class="account-info"><p><span>Név:</span> <strong id="profile-name">-</strong></p><p><span>E-mail:</span> <strong id="profile-email">-</strong></p><p><span>Fiók állapota:</span> <strong id="profile-verified">-</strong></p><p><span>Jogosultság:</span> <strong id="profile-role">CUSTOMER</strong></p><p><span>Discord:</span> <strong id="profile-discord">NINCS ÖSSZEKAPCSOLVA</strong></p></div><button type="button" class="btn btn-outline full-btn" id="link-discord">DISCORD-FIÓK ÖSSZEKAPCSOLÁSA ↗</button><p class="muted" style="font-size:12px">Vásárláshoz szükséges. A Discord bejelentkezési felületére irányítunk át, nem kérünk Discord-jelszót.</p><button class="btn btn-primary full-btn" type="button" id="admin-open" hidden>FEJLESZTŐI PANEL ↗</button><button class="btn btn-outline full-btn" style="margin-top:11px" type="button" id="logout-btn">KIJELENTKEZÉS</button></div></div>
 
   <!-- Admin modal -->
-  <div class="overlay" id="admin-overlay" aria-hidden="true"><div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="admin-title"><button class="modal-close" data-close="admin-overlay" aria-label="Bezárás">×</button><div class="eyebrow">DEVELOPER ACCESS / PRODUCT MANAGEMENT</div><h2 id="admin-title" style="margin-top:14px">SYNTERX <span class="text-red">CONTROL.</span></h2><div class="panel-toolbar"><p class="muted" style="font-size:12px">Termékek kezelése Google Sheets adatbázissal</p><button class="btn btn-outline btn-small" id="admin-new" type="button">+ ÚJ TERMÉK</button></div><div id="admin-list" class="admin-list"><p class="muted">Betöltés…</p></div><hr class="admin-sep"><h3 style="font:700 28px 'Rajdhani'" id="editor-title">ÚJ TERMÉK</h3>
+  <div class="overlay" id="admin-overlay" aria-hidden="true"><div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="admin-title"><button class="modal-close" data-close="admin-overlay" aria-label="Bezárás">×</button><div class="eyebrow">DEVELOPER ACCESS / PRODUCT MANAGEMENT</div><h2 id="admin-title" style="margin-top:14px">SYNTERX <span class="text-red">CONTROL.</span></h2><div class="panel-toolbar"><p class="muted" style="font-size:12px">Termékek kezelése Google Sheets adatbázissal</p><button class="btn btn-outline btn-small" id="admin-new" type="button">+ ÚJ TERMÉK</button></div><div id="admin-list" class="admin-list"><p class="muted">Betöltés…</p></div><h3 class="sx-orders-title">VÁSÁRLÁSOK / STRIPE STÁTUSZ</h3><button class="btn btn-outline btn-small" type="button" id="refresh-orders">RENDELÉSEK FRISSÍTÉSE ↻</button><div id="admin-orders" class="sx-orders"><p class="muted">Rendelések betöltése…</p></div><hr class="admin-sep"><h3 style="font:700 28px 'Rajdhani'" id="editor-title">ÚJ TERMÉK</h3>
       <form id="product-form"><input type="hidden" id="p-id"><div class="form-grid"><div class="field"><label for="p-title">TERMÉK NEVE *</label><input id="p-title" required maxlength="90" placeholder="SYNTERX ELITE"></div><div class="field"><label for="p-subtitle">RÖVID ALCÍM</label><input id="p-subtitle" maxlength="130" placeholder="Premium digital utility"></div><div class="field"><label for="p-price">ÁR (HUF) *</label><input id="p-price" type="number" min="0" max="100000000" required placeholder="9990"></div><div class="field"><label for="p-category">KATEGÓRIA</label><input id="p-category" maxlength="50" placeholder="Digital utility"></div><div class="field"><label for="p-badge">CÍMKE</label><input id="p-badge" maxlength="36" placeholder="BESTSELLER"></div><div class="field"><label for="p-image">FŐ KÉP (HTTPS URL)</label><input id="p-image" type="url" placeholder="https://..."><small>Publikusan elérhető kép linkje</small></div><div class="field full"><label for="p-upload">VAGY KÉP FELTÖLTÉSE GOOGLE DRIVE-BA (OPCIONÁLIS)</label><input id="p-upload" type="file" accept="image/jpeg,image/png,image/webp"><button type="button" id="upload-btn" class="btn btn-outline btn-small" style="margin-top:8px">KÉP FELTÖLTÉSE ↗</button><small>Maximum 2 MB. A Drive mappa azonosítóját a Code.gs fájlban kell megadni.</small></div><div class="field full"><label for="p-description">TERMÉKLEÍRÁS *</label><textarea id="p-description" maxlength="2000" required placeholder="Írd le a terméket..."></textarea></div><div class="field"><label for="p-features">ELŐNYÖK (SORONKÉNT)</label><textarea id="p-features" placeholder="Kényelmes használat&#10;Modern kezelőfelület"></textarea></div><div class="field"><label for="p-gallery">TOVÁBBI KÉPEK (URL / SOR)</label><textarea id="p-gallery" placeholder="https://.../image1.png&#10;https://.../image2.png"></textarea></div><div class="field full"><label for="p-stripe">STRIPE PAYMENT LINK</label><input id="p-stripe" type="url" placeholder="https://buy.stripe.com/..."><small>Termékenként eltérő árhoz külön Stripe Payment Link szükséges. Üresen hagyva a Code.gs alapértelmezett linkje lép életbe.</small></div><div class="field"><label><input type="checkbox" id="p-active" checked style="width:auto;margin-right:7px"> AKTÍV TERMÉK (LÁTHATÓ)</label></div><div class="field"><label><input type="checkbox" id="p-featured" style="width:auto;margin-right:7px"> KIEMELT TERMÉK</label></div></div><img id="p-preview" class="product-preview" alt="Termékkép előnézet"><div class="form-error" id="product-error" role="alert"></div><button class="btn btn-primary" id="p-save" type="submit">TERMÉK MENTÉSE ↗</button></form>
   </div></div>
   <div id="toast" role="status" aria-live="polite"></div>
@@ -120,6 +138,7 @@
     const API_URL = '/.netlify/functions/api';
     // A saját logo.png a public/index.html mellett található.
     const BRAND_LOGO_URL = 'logo.png'; // SYNTERX logó az index.html mellett
+    const DISCORD_INVITE_URL = ''; // IDE másold a szervermeghívódat, pl. https://discord.gg/abc123
     let user = null, profile = null, products = [], adminProducts = [], authMode = 'login', toastTimer, resetToken = ''; 
     const $ = sel => document.querySelector(sel);
     const $$ = sel => [...document.querySelectorAll(sel)];
@@ -151,14 +170,15 @@
         const img=safeImage(p.imageUrl);
         const media=img?`<img src="${escapeHtml(img)}" alt="${escapeHtml(p.title)}" loading="lazy" onerror="this.style.display='none';this.nextElementSibling.style.display='grid'"><div class="product-placeholder" style="display:none"><span>SX</span></div>`:`<div class="product-placeholder"><span>SX</span></div>`;
         const features=(p.features||[]).slice(0,3).map(x=>`<div class="product-feature"><span class="check">✓</span><span>${escapeHtml(x)}</span></div>`).join('');
-        const canBuy=!!safeCheckout(p.stripeUrl);
-        return `<article class="product reveal visible"><div class="product-media">${media}${p.badge?`<span class="product-tag">${escapeHtml(p.badge)}</span>`:''}</div><div class="product-body"><div class="product-category">// ${escapeHtml(p.category||'DIGITAL')}</div><h3>${escapeHtml(p.title)}</h3><div class="product-sub">${escapeHtml(p.subtitle||p.description||'')}</div>${features}<button class="product-detail-link" type="button" data-detail="${escapeHtml(p.id)}">TELJES LEÍRÁS / RÉSZLETEK ↗</button><div class="product-foot"><div class="price"><small>EGYSZERI ÁR</small><strong>${currency(p.priceHuf)}</strong></div><button class="btn ${canBuy?'btn-primary':'btn-outline'} btn-small" type="button" data-buy="${escapeHtml(p.id)}" ${canBuy?'':'disabled'}>${canBuy?'MEGVESZEM ↗':'HAMAROSAN'}</button></div></div></article>`
+        const canBuy=!!(user?.discordId && p.canCheckout);
+        return `<article class="product reveal visible"><div class="product-media">${media}${p.badge?`<span class="product-tag">${escapeHtml(p.badge)}</span>`:''}</div><div class="product-body"><div class="product-category">// ${escapeHtml(p.category||'DIGITAL')}</div><h3>${escapeHtml(p.title)}</h3><div class="product-sub">${escapeHtml(p.subtitle||p.description||'')}</div>${features}<button class="product-detail-link" type="button" data-detail="${escapeHtml(p.id)}">TELJES LEÍRÁS / RÉSZLETEK ↗</button><div class="product-foot"><div class="price"><small>EGYSZERI ÁR</small><strong>${currency(p.priceHuf)}</strong></div><button class="btn ${canBuy?'btn-primary':'btn-outline'} btn-small" type="button" data-buy="${escapeHtml(p.id)}" ${canBuy?'':'disabled'}>${canBuy?'MEGVESZEM ↗':(p.canCheckout?'BELÉPÉS + DISCORD SZÜKSÉGES':'HAMAROSAN')}</button></div></div></article>`
       }).join('');
       $$('[data-buy]').forEach(button=>button.addEventListener('click',()=>buy(button.dataset.buy)));$$('[data-detail]').forEach(button=>button.addEventListener('click',()=>showProduct(button.dataset.detail)));
     }
     async function loadStore(){
       try {const data=await api('getStorefront');products=data.products||[];renderProducts();
-        if(data.store?.supportEmail){$('#support-link').href='mailto:'+data.store.supportEmail;$('#support-link').textContent='KAPCSOLAT'}
+        // Kapcsolatfelvétel Discord ticketen keresztül zajlik.
+
       }catch(e){products=[];renderProducts();toast('Terméklekérési hiba: '+e.message)}
     }
     function showProduct(id){
@@ -168,13 +188,15 @@
       const imgs=[p.imageUrl,...(p.galleryUrls||[])].map(safeImage).filter(Boolean),img=$('#detail-cover'),gallery=$('#detail-gallery');
       img.hidden=imgs.length===0;if(imgs.length)img.src=imgs[0];gallery.innerHTML='';
       imgs.forEach((url,index)=>{const btn=document.createElement('button'),thumb=document.createElement('img');btn.type='button';thumb.src=url;thumb.alt='Termékkép '+(index+1);btn.appendChild(thumb);btn.onclick=()=>img.src=url;gallery.appendChild(btn)});
-      const buyButton=$('#detail-buy');buyButton.disabled=!safeCheckout(p.stripeUrl);buyButton.textContent=buyButton.disabled?'FIZETÉS HAMAROSAN':'MEGVESZEM ↗';buyButton.onclick=()=>buy(id);
+      const buyButton=$('#detail-buy');const permitted=!!(user?.discordId && p.canCheckout);buyButton.disabled=!permitted;buyButton.textContent=permitted?'MEGVESZEM ↗':'VÁSÁRLÁS NEM ELÉRHETŐ';buyButton.onclick=()=>buy(id);
+      $('#purchase-hint').textContent=!p.canCheckout?'Ehhez a termékhez még nincs fizetési link.':!user?'Előbb jelentkezz be a SYNTERX-fiókodba.':!user.discordId?'Előbb kösd össze a Discord-fiókodat a profilodban.':'';
       showModal('product-overlay');
     }
     async function buy(id){
       const p=products.find(x=>x.id===id);if(!p)return;
       if(!user){toast('A vásárláshoz jelentkezz be.');showModal('auth-overlay');return}
-      if(!safeCheckout(p.stripeUrl)){toast('Ehhez a termékhez még nincs Stripe link.');return}
+      if(!user.discordId){toast('Előbb kösd össze a Discord-fiókodat a profilodban.');return}
+      if(!p.canCheckout){toast('Ehhez a termékhez még nincs Stripe link.');return}
       // Reserve the tab synchronously, so browsers do not block it after the API request.
       const tab=window.open('about:blank','_blank');
       try{const info=await api('startCheckout',{productId:id});if(!safeCheckout(info.stripeUrl))throw Error('Hibás Stripe link.');
@@ -213,21 +235,35 @@
       finally{button.disabled=false;button.textContent=authMode==='register'?'FIÓK LÉTREHOZÁSA ↗':authMode==='reset'?'JELSZÓ MÓDOSÍTÁSA ↗':'BEJELENTKEZÉS ↗'}
     }
     async function updateAccount(){
-      if(!user){profile=null;$('#account-btn').textContent='BEJELENTKEZÉS ↗';$('#admin-open').hidden=true;return}
+      if(!user){profile=null;$('#account-btn').textContent='BEJELENTKEZÉS ↗';$('#admin-open').hidden=true;renderProducts();return}
       $('#account-btn').textContent='FIÓKOM ↗';$('#profile-email').textContent=user.email||'-';
       $('#profile-name').textContent=user.displayName||'SYNTERX MEMBER';$('#profile-verified').textContent='AKTÍV';
       $('#verify-btn').hidden=true;$('#profile-role').textContent=user.role==='developer'?'DEVELOPER':'CUSTOMER';
       profile=user;$('#admin-open').hidden=user.role!=='developer';
+      renderProducts();
+      $('#profile-discord').textContent=user.discordId?(user.discordName+' ('+user.discordId+')'):'NINCS ÖSSZEKAPCSOLVA';
+      $('#link-discord').textContent=user.discordId?'DISCORD ÚJRAÖSSZEKAPCSOLÁSA ↗':'DISCORD-FIÓK ÖSSZEKAPCSOLÁSA ↗';
     }
     async function restoreSession(){
       try{const res=await api('me');user=res.user;await updateAccount()}catch(e){user=null;await updateAccount();console.warn('Session:',e.message)}
       const search=new URLSearchParams(location.search);resetToken=search.get('reset')||'';
       if(resetToken){setAuthMode('reset');$('#auth-email').value=search.get('email')||'';showModal('auth-overlay')}
+      const discordResult=search.get('discord');if(discordResult){toast(discordResult==='connected'?'Discord-fiók sikeresen összekapcsolva!':'Nem sikerült a Discord összekapcsolás.');const clean=new URL(location.href);clean.searchParams.delete('discord');history.replaceState(null,'',clean.pathname+clean.search+clean.hash);}
     }
     function setupBrandLogo(){const src=BRAND_LOGO_URL;if(!src)return;const img=document.createElement('img');img.src=src;img.className='hero-logo-img';img.alt='SYNTERX metallic neon logo';img.onload=()=>$('#hero-emblem').classList.add('logo-image');img.onerror=()=>img.remove();$('#hero-emblem').appendChild(img)}
     async function uploadImage(){const file=$('#p-upload').files[0];if(!file){toast('Válassz ki egy képet.');return}if(!['image/jpeg','image/png','image/webp'].includes(file.type)||file.size>2*1024*1024){toast('Csak JPG/PNG/WEBP, max. 2 MB.');return}const b=$('#upload-btn');b.disabled=true;b.textContent='FELTÖLTÉS…';try{const base64=await new Promise((res,rej)=>{const r=new FileReader();r.onerror=()=>rej(Error('A fájl nem olvasható.'));r.onload=()=>res(String(r.result).split(',')[1]);r.readAsDataURL(file)});const result=await api('uploadProductImage',{mime:file.type,base64});$('#p-image').value=result.url;previewImage();toast('Kép feltöltve! A termék mentésével kerül ki a webshopba.')}catch(e){toast('Feltöltési hiba: '+e.message)}finally{b.disabled=false;b.textContent='KÉP FELTÖLTÉSE ↗'}}
     function renderAdminList(){const el=$('#admin-list');if(!adminProducts.length){el.innerHTML='<p class="muted">Még nincs létrehozott termék.</p>';return}el.innerHTML=adminProducts.map(p=>`<div class="admin-item"><div class="admin-item-main"><h4>${escapeHtml(p.title)} <span class="tag ${p.active?'':'off'}">${p.active?'AKTÍV':'REJTETT'}</span></h4><p>${currency(p.priceHuf)} • ${escapeHtml(p.category)}</p></div><div class="admin-controls"><button class="btn btn-outline btn-small" type="button" data-edit="${escapeHtml(p.id)}">SZERKESZTÉS</button><button class="btn btn-outline btn-small" type="button" data-delete="${escapeHtml(p.id)}">ELREJTÉS</button></div></div>`).join('');$$('[data-edit]').forEach(b=>b.onclick=()=>editProduct(b.dataset.edit));$$('[data-delete]').forEach(b=>b.onclick=()=>removeProduct(b.dataset.delete))}
-    async function loadAdmin(){if(!profile||profile.role!=='developer'){toast('Nincs hozzáférésed.');return}showModal('admin-overlay');try{adminProducts=await api('getAdminProducts');renderAdminList()}catch(e){toast(e.message)}}
+    async function loadOrders(){
+      try {
+        const orders=await api('getAdminOrders');
+        $('#admin-orders').innerHTML=orders.length?orders.map(o=>`<div class="sx-order"><b>${escapeHtml(o.email)}</b> • ${currency(o.amountHuf)}<br>
+          <span class="${o.status==='paid'?'paid':'pending'}">${o.status==='paid'?'✓ FIZETVE':'◷ '+escapeHtml(o.status)}</span>
+          • Termék: ${escapeHtml(o.productId)}<br>Discord: ${escapeHtml(o.discordName||'–')} (${escapeHtml(o.discordId||'–')})<br>
+          Rendelés: ${escapeHtml(o.id)} • Létrehozva: ${escapeHtml(o.createdAt)}<br>
+          ${o.status==='paid'?'Fizetés ideje: '+escapeHtml(o.paidAt)+' • Stripe e-mail: '+escapeHtml(o.paymentEmail):''}</div>`).join(''):'<p class="muted">Még nincs rendelés.</p>';
+      }catch(e){$('#admin-orders').textContent='Hiba: '+e.message}
+    }
+    async function loadAdmin(){if(!profile||profile.role!=='developer'){toast('Nincs hozzáférésed.');return}showModal('admin-overlay');try{adminProducts=await api('getAdminProducts');renderAdminList();await loadOrders()}catch(e){toast(e.message)}}
     function editProduct(id){const p=adminProducts.find(x=>x.id===id);if(!p)return;$('#editor-title').textContent='TERMÉK SZERKESZTÉSE';const values={'p-id':p.id,'p-title':p.title,'p-subtitle':p.subtitle,'p-price':p.priceHuf,'p-category':p.category,'p-badge':p.badge,'p-description':p.description,'p-features':(p.features||[]).join('\n'),'p-image':p.imageUrl,'p-gallery':(p.galleryUrls||[]).join('\n'),'p-stripe':p.stripeUrl};Object.entries(values).forEach(([k,v])=>$('#'+k).value=v??'');$('#p-active').checked=p.active;$('#p-featured').checked=p.featured;previewImage();$('#product-form').scrollIntoView({behavior:'smooth',block:'nearest'})}
     function resetProduct(){ $('#product-form').reset();$('#p-id').value='';$('#p-active').checked=true;$('#p-featured').checked=false;$('#product-error').textContent='';$('#editor-title').textContent='ÚJ TERMÉK';previewImage() }
     function previewImage(){const src=safeImage($('#p-image').value.trim()),el=$('#p-preview');el.style.display=src?'block':'none';if(src)el.src=src}
@@ -251,15 +287,15 @@
       window.addEventListener('resize',syncTickerSpeed,{passive:true});
       const motionToggle=$('#sx-motion-toggle');
       motionToggle.addEventListener('click',()=>{
-        const paused=document.body.classList.toggle('sx-motion-paused');
-        motionToggle.setAttribute('aria-pressed',String(paused));
-        motionToggle.textContent=paused?'▶ MOZGÁS FOLYTATÁSA':'⏸ MOZGÁS SZÜNETELTETÉSE';
+        const active=document.body.classList.toggle('sx-motion-active');
+        motionToggle.setAttribute('aria-pressed',String(active));
+        motionToggle.textContent=active?'⏸ MOZGÁS KIKAPCSOLÁSA':'▶ LASSÚ MOZGÁS BEKAPCSOLÁSA';
       });
       const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');observer.unobserve(e.target)}}),{threshold:.12});$$('.reveal').forEach(el=>observer.observe(el));
       if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
       const cvs=$('#ambient'),ctx=cvs.getContext('2d');let w,h,pts=[],animationId,lastFrame=null;
       function resize(){const d=Math.min(devicePixelRatio||1,2);w=innerWidth;h=innerHeight;cvs.width=Math.floor(w*d);cvs.height=Math.floor(h*d);ctx.setTransform(d,0,0,d,0,0);pts=Array.from({length:Math.min(55,Math.floor(w/28))},()=>({x:Math.random()*w,y:Math.random()*h,vy:.08+Math.random()*.14,r:.5+Math.random()*1.5,o:.08+Math.random()*.25}))}
-      function draw(now){const delta=lastFrame===null?0:Math.min((now-lastFrame)/1000,.05);lastFrame=now;ctx.clearRect(0,0,w,h);pts.forEach(p=>{if(!document.body.classList.contains('sx-motion-paused'))p.y-=p.vy*delta;if(p.y<0){p.y=h;p.x=Math.random()*w}ctx.beginPath();ctx.fillStyle=`rgba(255,43,78,${p.o})`;ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill()});animationId=requestAnimationFrame(draw)}
+      function draw(now){const delta=lastFrame===null?0:Math.min((now-lastFrame)/1000,.05);lastFrame=now;ctx.clearRect(0,0,w,h);pts.forEach(p=>{if(document.body.classList.contains('sx-motion-active'))p.y-=p.vy*delta;if(p.y<0){p.y=h;p.x=Math.random()*w}ctx.beginPath();ctx.fillStyle=`rgba(255,43,78,${p.o})`;ctx.arc(p.x,p.y,p.r,0,Math.PI*2);ctx.fill()});animationId=requestAnimationFrame(draw)}
       window.addEventListener('resize',resize,{passive:true});document.addEventListener('visibilitychange',()=>{if(document.hidden){cancelAnimationFrame(animationId);lastFrame=null}else{lastFrame=null;animationId=requestAnimationFrame(draw)}});resize();animationId=requestAnimationFrame(draw)
     }
     function bindUI(){
@@ -279,6 +315,9 @@
       $('#verify-btn').hidden=true;
       $('#logout-btn').onclick=async()=>{try{await api('logout')}catch(e){toast(e.message)}user=null;await updateAccount();closeModal('account-overlay');toast('Kijelentkeztél.')};
       $('#admin-open').onclick=()=>{closeModal('account-overlay');loadAdmin()};
+      $('#refresh-orders').onclick=loadOrders;
+      $('#link-discord').onclick=()=>{window.location.href=API_URL+'?oauth=start'};
+      const invite=$('#discord-server-link');if(/^https:\/\/(discord\.gg|discord\.com\/invite)\/[A-Za-z0-9-]+$/.test(DISCORD_INVITE_URL)){invite.href=DISCORD_INVITE_URL;invite.setAttribute('aria-disabled','false')}else{invite.textContent='DISCORD MEGHÍVÓ HAMAROSAN'}
       $('#admin-new').onclick=resetProduct;$('#product-form').onsubmit=saveProduct;
       $('#p-image').oninput=previewImage;$('#upload-btn').onclick=uploadImage;
       $$('.faq-q').forEach(b=>b.onclick=()=>{const el=b.closest('.faq-item');el.classList.toggle('open');b.setAttribute('aria-expanded',String(el.classList.contains('open')))});
