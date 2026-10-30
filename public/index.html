@@ -66,7 +66,14 @@
     .sx-order{padding:14px;border-radius:9px;background:#101019;border:1px solid #542033;font:400 12px/1.8 'DM Sans',sans-serif;overflow-wrap:anywhere}
     .sx-order b{color:#fff}.sx-order .paid{color:#6ee7a1}.sx-order .pending{color:#ffc58d}
     @media(max-width:760px){.sx-support-card{flex-direction:column;align-items:flex-start;padding:23px}.sx-support-card .btn{white-space:normal}}
+  
+    /* V6 Stripe embedded panel */
+    .sx-pay-modal{max-width:760px!important}
+    #sx-stripe-checkout{min-height:180px;padding:8px 0}
+    #checkout-overlay .modal{background:#111118}
+    @media(max-width:760px){.sx-pay-modal{padding:22px 15px!important}}
   </style>
+<script src="https://js.stripe.com/v3/"></script>
 </head>
 <body>
   <canvas id="ambient" aria-hidden="true"></canvas><div class="grain" aria-hidden="true"></div>
@@ -119,6 +126,19 @@
   <!-- Product details modal -->
   <div class="overlay" id="product-overlay" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="detail-title"><button class="modal-close" data-close="product-overlay" aria-label="Bezárás">×</button><div class="eyebrow">SYNTERX / PRODUCT DETAILS</div><h2 id="detail-title" style="margin-top:18px">TERMÉK</h2><div id="detail-price" style="font:700 28px 'Rajdhani';color:#ff4363"></div><img id="detail-cover" class="detail-cover" alt="Termék képe" hidden><div id="detail-gallery" class="gallery-grid"></div><p id="detail-description" class="detail-desc"></p><div id="detail-features" style="padding:16px 0"></div><div class="sx-install-note"><strong>TELEPÍTÉS / ANYDESK</strong><p>Vásárlás után a Discord szerverünkön nyiss <b>Installation ticketet</b>. A fejlesztők veled egyeztetve, AnyDesk segítségével állítják be a terméket. A távoli hozzáférés csak a hozzájárulásoddal történik.</p></div><p id="purchase-hint" class="muted" style="font-size:12px"></p><button id="detail-buy" type="button" class="btn btn-primary full-btn">MEGVESZEM ↗</button></div></div>
 
+  <!-- V6: Embedded Stripe Checkout stays inside SYNTERX -->
+  <div class="overlay" id="checkout-overlay" aria-hidden="true">
+    <div class="modal wide sx-pay-modal" role="dialog" aria-modal="true" aria-labelledby="sx-pay-title">
+      <button class="modal-close" id="close-checkout" type="button" aria-label="Bezárás">×</button>
+      <div class="eyebrow">SYNTERX / SECURE CHECKOUT</div>
+      <h2 id="sx-pay-title" style="margin-top:12px">BIZTONSÁGOS FIZETÉS.</h2>
+      <p class="modal-desc">A kártyaadatokat közvetlenül a Stripe kezeli. SYNTERX nem tárol bankkártyaadatokat.</p>
+      <div id="sx-checkout-state" role="status" class="muted" style="font-size:13px;margin:12px 0"></div>
+      <div id="sx-stripe-checkout" style="min-height:100px"></div>
+      <button type="button" id="sx-checkout-cancel" class="btn btn-outline full-btn" style="margin-top:18px">VISSZA A WEBSHOPBA</button>
+    </div>
+  </div>
+
   <!-- Authentication modal -->
   <div class="overlay" id="auth-overlay" aria-hidden="true"><div class="modal" role="dialog" aria-modal="true" aria-labelledby="auth-title"><button class="modal-close" data-close="auth-overlay" aria-label="Bezárás">×</button><div class="modal-logo"><div class="mark custom-mark"><img src="logo.png" alt="SYNTERX logó" loading="eager"></div><span style="font:700 22px 'Rajdhani';letter-spacing:.13em">SYNTERX <span class="text-red">ID</span></span></div><h2 id="auth-title">WELCOME BACK.</h2><p class="modal-desc">Lépj be a saját SYNTERX fiókodba.</p><div class="tabs"><button type="button" class="tab active" id="tab-login">BEJELENTKEZÉS</button><button type="button" class="tab" id="tab-register">REGISZTRÁCIÓ</button></div>
     <div id="password-notice" class="sx-password-notice" hidden role="note"><strong>⚠ FONTOS – SAJÁT JELSZÓT HASZNÁLJ!</strong><p>A SYNTERX-hez olyan <b>egyedi, legalább 12 karakteres jelszót</b> adj meg, amelyet sehol máshol nem használsz. A jelszavadat a rendszer automatikusan védett kivonatként tárolja, nem olvasható szövegként.</p></div>
@@ -130,7 +150,7 @@
 
   <!-- Admin modal -->
   <div class="overlay" id="admin-overlay" aria-hidden="true"><div class="modal wide" role="dialog" aria-modal="true" aria-labelledby="admin-title"><button class="modal-close" data-close="admin-overlay" aria-label="Bezárás">×</button><div class="eyebrow">DEVELOPER ACCESS / PRODUCT MANAGEMENT</div><h2 id="admin-title" style="margin-top:14px">SYNTERX <span class="text-red">CONTROL.</span></h2><div class="panel-toolbar"><p class="muted" style="font-size:12px">Termékek kezelése Google Sheets adatbázissal</p><button class="btn btn-outline btn-small" id="admin-new" type="button">+ ÚJ TERMÉK</button></div><div id="admin-list" class="admin-list"><p class="muted">Betöltés…</p></div><h3 class="sx-orders-title">VÁSÁRLÁSOK / STRIPE STÁTUSZ</h3><button class="btn btn-outline btn-small" type="button" id="refresh-orders">RENDELÉSEK FRISSÍTÉSE ↻</button><div id="admin-orders" class="sx-orders"><p class="muted">Rendelések betöltése…</p></div><hr class="admin-sep"><h3 style="font:700 28px 'Rajdhani'" id="editor-title">ÚJ TERMÉK</h3>
-      <form id="product-form"><input type="hidden" id="p-id"><div class="form-grid"><div class="field"><label for="p-title">TERMÉK NEVE *</label><input id="p-title" required maxlength="90" placeholder="SYNTERX ELITE"></div><div class="field"><label for="p-subtitle">RÖVID ALCÍM</label><input id="p-subtitle" maxlength="130" placeholder="Premium digital utility"></div><div class="field"><label for="p-price">ÁR (HUF) *</label><input id="p-price" type="number" min="0" max="100000000" required placeholder="9990"></div><div class="field"><label for="p-category">KATEGÓRIA</label><input id="p-category" maxlength="50" placeholder="Digital utility"></div><div class="field"><label for="p-badge">CÍMKE</label><input id="p-badge" maxlength="36" placeholder="BESTSELLER"></div><div class="field"><label for="p-image">FŐ KÉP (HTTPS URL)</label><input id="p-image" type="url" placeholder="https://..."><small>Publikusan elérhető kép linkje</small></div><div class="field full"><label for="p-upload">VAGY KÉP FELTÖLTÉSE GOOGLE DRIVE-BA (OPCIONÁLIS)</label><input id="p-upload" type="file" accept="image/jpeg,image/png,image/webp"><button type="button" id="upload-btn" class="btn btn-outline btn-small" style="margin-top:8px">KÉP FELTÖLTÉSE ↗</button><small>Maximum 2 MB. A Drive mappa azonosítóját a Code.gs fájlban kell megadni.</small></div><div class="field full"><label for="p-description">TERMÉKLEÍRÁS *</label><textarea id="p-description" maxlength="2000" required placeholder="Írd le a terméket..."></textarea></div><div class="field"><label for="p-features">ELŐNYÖK (SORONKÉNT)</label><textarea id="p-features" placeholder="Kényelmes használat&#10;Modern kezelőfelület"></textarea></div><div class="field"><label for="p-gallery">TOVÁBBI KÉPEK (URL / SOR)</label><textarea id="p-gallery" placeholder="https://.../image1.png&#10;https://.../image2.png"></textarea></div><div class="field full"><label for="p-stripe">STRIPE PAYMENT LINK</label><input id="p-stripe" type="url" placeholder="https://buy.stripe.com/..."><small>Termékenként eltérő árhoz külön Stripe Payment Link szükséges. Üresen hagyva a Code.gs alapértelmezett linkje lép életbe.</small></div><div class="field"><label><input type="checkbox" id="p-active" checked style="width:auto;margin-right:7px"> AKTÍV TERMÉK (LÁTHATÓ)</label></div><div class="field"><label><input type="checkbox" id="p-featured" style="width:auto;margin-right:7px"> KIEMELT TERMÉK</label></div></div><img id="p-preview" class="product-preview" alt="Termékkép előnézet"><div class="form-error" id="product-error" role="alert"></div><button class="btn btn-primary" id="p-save" type="submit">TERMÉK MENTÉSE ↗</button></form>
+      <form id="product-form"><input type="hidden" id="p-id"><div class="form-grid"><div class="field"><label for="p-title">TERMÉK NEVE *</label><input id="p-title" required maxlength="90" placeholder="SYNTERX ELITE"></div><div class="field"><label for="p-subtitle">RÖVID ALCÍM</label><input id="p-subtitle" maxlength="130" placeholder="Premium digital utility"></div><div class="field"><label for="p-price">ÁR (HUF) *</label><input id="p-price" type="number" min="0" max="100000000" required placeholder="9990"></div><div class="field"><label for="p-category">KATEGÓRIA</label><input id="p-category" maxlength="50" placeholder="Digital utility"></div><div class="field"><label for="p-badge">CÍMKE</label><input id="p-badge" maxlength="36" placeholder="BESTSELLER"></div><div class="field"><label for="p-image">FŐ KÉP (HTTPS URL)</label><input id="p-image" type="url" placeholder="https://..."><small>Publikusan elérhető kép linkje</small></div><div class="field full"><label for="p-upload">VAGY KÉP FELTÖLTÉSE GOOGLE DRIVE-BA (OPCIONÁLIS)</label><input id="p-upload" type="file" accept="image/jpeg,image/png,image/webp"><button type="button" id="upload-btn" class="btn btn-outline btn-small" style="margin-top:8px">KÉP FELTÖLTÉSE ↗</button><small>Maximum 2 MB. A Drive mappa azonosítóját a Code.gs fájlban kell megadni.</small></div><div class="field full"><label for="p-description">TERMÉKLEÍRÁS *</label><textarea id="p-description" maxlength="2000" required placeholder="Írd le a terméket..."></textarea></div><div class="field"><label for="p-features">ELŐNYÖK (SORONKÉNT)</label><textarea id="p-features" placeholder="Kényelmes használat&#10;Modern kezelőfelület"></textarea></div><div class="field"><label for="p-gallery">TOVÁBBI KÉPEK (URL / SOR)</label><textarea id="p-gallery" placeholder="https://.../image1.png&#10;https://.../image2.png"></textarea></div><div class="field full"><label for="p-stripe">KORÁBBI STRIPE LINK (NEM SZÜKSÉGES)</label><input id="p-stripe" type="url" placeholder="https://buy.stripe.com/..."><small>Az oldalon belüli fizetés a Google Sheetsben megadott Ft-ár alapján hoz létre Stripe Checkout Sessiont. Ezt a mezőt üresen hagyhatod.</small></div><div class="field"><label><input type="checkbox" id="p-active" checked style="width:auto;margin-right:7px"> AKTÍV TERMÉK (LÁTHATÓ)</label></div><div class="field"><label><input type="checkbox" id="p-featured" style="width:auto;margin-right:7px"> KIEMELT TERMÉK</label></div></div><img id="p-preview" class="product-preview" alt="Termékkép előnézet"><div class="form-error" id="product-error" role="alert"></div><button class="btn btn-primary" id="p-save" type="submit">TERMÉK MENTÉSE ↗</button></form>
   </div></div>
   <div id="toast" role="status" aria-live="polite"></div>
   <script>
@@ -189,19 +209,75 @@
       img.hidden=imgs.length===0;if(imgs.length)img.src=imgs[0];gallery.innerHTML='';
       imgs.forEach((url,index)=>{const btn=document.createElement('button'),thumb=document.createElement('img');btn.type='button';thumb.src=url;thumb.alt='Termékkép '+(index+1);btn.appendChild(thumb);btn.onclick=()=>img.src=url;gallery.appendChild(btn)});
       const buyButton=$('#detail-buy');const permitted=!!(user?.discordId && p.canCheckout);buyButton.disabled=!permitted;buyButton.textContent=permitted?'MEGVESZEM ↗':'VÁSÁRLÁS NEM ELÉRHETŐ';buyButton.onclick=()=>buy(id);
-      $('#purchase-hint').textContent=!p.canCheckout?'Ehhez a termékhez még nincs fizetési link.':!user?'Előbb jelentkezz be a SYNTERX-fiókodba.':!user.discordId?'Előbb kösd össze a Discord-fiókodat a profilodban.':'';
+      $('#purchase-hint').textContent=!p.canCheckout?'Ennél a terméknél jelenleg nem elérhető a fizetés.':!user?'Előbb jelentkezz be a SYNTERX-fiókodba.':!user.discordId?'Előbb kösd össze a Discord-fiókodat a profilodban.':'';
       showModal('product-overlay');
+    }
+    let activeCheckout=null;
+    let activeCheckoutSessionId='';
+    async function closeCheckout(){
+      if(activeCheckout){
+        try{activeCheckout.destroy()}catch(e){console.warn('Checkout cleanup',e)}
+        activeCheckout=null;
+      }
+      $('#sx-stripe-checkout').replaceChildren();
+      closeModal('checkout-overlay');
+    }
+    async function checkCheckoutStatus(sessionId, retries=12){
+      const state=$('#sx-checkout-state');
+      for(let i=0;i<retries;i++){
+        try{
+          const r=await api('getCheckoutStatus',{sessionId});
+          if(r.paymentStatus==='paid'){
+            state.textContent='✓ Sikeres fizetés! Nyiss egy Installation ticketet Discordon a telepítéshez.';
+            toast('Fizetés rögzítve. Discord ticketben egyeztess a telepítésről.');
+            return;
+          }
+          state.textContent=r.stripePaymentStatus==='paid'
+            ? 'A Stripe elfogadta a fizetést. A rendelés végleges visszaigazolására várunk…'
+            : 'A fizetés még nincs visszaigazolva.';
+        }catch(e){state.textContent='A fizetés állapota most nem ellenőrizhető. A fejlesztők a rendelési panelen látják az igazolt fizetést.';return}
+        if(i<retries-1)await new Promise(resolve=>setTimeout(resolve,2500));
+      }
+      state.textContent='A visszaigazolás késhet. Ellenőrizd később a rendelést, vagy nyiss Discord ticketet.';
     }
     async function buy(id){
       const p=products.find(x=>x.id===id);if(!p)return;
       if(!user){toast('A vásárláshoz jelentkezz be.');showModal('auth-overlay');return}
       if(!user.discordId){toast('Előbb kösd össze a Discord-fiókodat a profilodban.');return}
-      if(!p.canCheckout){toast('Ehhez a termékhez még nincs Stripe link.');return}
-      // Reserve the tab synchronously, so browsers do not block it after the API request.
-      const tab=window.open('about:blank','_blank');
-      try{const info=await api('startCheckout',{productId:id});if(!safeCheckout(info.stripeUrl))throw Error('Hibás Stripe link.');
-        if(tab){tab.opener=null;tab.location.href=info.stripeUrl}else{window.location.href=info.stripeUrl}
-      }catch(e){if(tab)tab.close();toast('Fizetés megnyitási hiba: '+e.message)}
+      if(!p.canCheckout){toast('Ennél a terméknél nincs elérhető fizetés.');return}
+      if(typeof window.Stripe!=='function'){toast('A Stripe fizetési modul nem tölthető be.');return}
+      closeModal('product-overlay');
+      $('#sx-checkout-state').textContent='Biztonságos fizetési felület betöltése…';
+      showModal('checkout-overlay');
+      try{
+        await closeStaleCheckout();
+        const info=await api('createEmbeddedCheckout',{productId:id});
+        activeCheckoutSessionId=info.sessionId;
+        const stripe=window.Stripe(info.publishableKey);
+        activeCheckout=await stripe.initEmbeddedCheckout({
+          fetchClientSecret:async()=>info.clientSecret,
+          onComplete:()=>{
+            $('#sx-checkout-state').textContent='Fizetés feldolgozása…';
+            checkCheckoutStatus(info.sessionId);
+          }
+        });
+        activeCheckout.mount('#sx-stripe-checkout');
+        $('#sx-checkout-state').textContent='Fizetés a Stripe biztonságos felületén, a SYNTERX oldalon belül.';
+      }catch(e){$('#sx-checkout-state').textContent='A fizetési panel nem indult el: '+e.message;toast(e.message)}
+    }
+    async function closeStaleCheckout(){
+      if(activeCheckout){try{activeCheckout.destroy()}catch(e){}activeCheckout=null}
+      $('#sx-stripe-checkout').replaceChildren();
+    }
+    async function handleReturnFromStripe(){
+      const qs=new URLSearchParams(location.search);
+      const sessionId=qs.get('checkout_session_id');
+      if(!sessionId)return;
+      const url=new URL(location.href);url.searchParams.delete('checkout_session_id');
+      history.replaceState(null,'',url.pathname+url.search+url.hash);
+      $('#sx-checkout-state').textContent='A fizetés ellenőrzése…';
+      showModal('checkout-overlay');
+      checkCheckoutStatus(sessionId);
     }
     function setAuthMode(mode){
       authMode=mode;const reg=mode==='register',reset=mode==='reset';
@@ -304,8 +380,8 @@
       $('#mobile-toggle').onclick=()=>$('#nav-links').classList.toggle('open');
       $$('.nav-links a').forEach(a=>a.onclick=()=>$('#nav-links').classList.remove('open'));
       $$('[data-close]').forEach(x=>x.onclick=()=>closeModal(x.dataset.close));
-      $$('.overlay').forEach(o=>o.onclick=e=>{if(e.target===o)closeModal(o.id)});
-      document.addEventListener('keydown',e=>{if(e.key==='Escape')$$('.overlay.open').forEach(o=>closeModal(o.id))});
+      $$('.overlay').forEach(o=>o.onclick=e=>{if(e.target===o){if(o.id==='checkout-overlay')closeCheckout();else closeModal(o.id)}});
+      document.addEventListener('keydown',e=>{if(e.key==='Escape')$$('.overlay.open').forEach(o=>{if(o.id==='checkout-overlay')closeCheckout();else closeModal(o.id)})});
       $('#tab-login').onclick=()=>setAuthMode('login');$('#tab-register').onclick=()=>setAuthMode('register');
       $('#auth-form').onsubmit=doAuth;
       $('#forgot-btn').onclick=async()=>{
@@ -317,12 +393,14 @@
       $('#admin-open').onclick=()=>{closeModal('account-overlay');loadAdmin()};
       $('#refresh-orders').onclick=loadOrders;
       $('#link-discord').onclick=()=>{window.location.href=API_URL+'?oauth=start'};
+      $('#close-checkout').onclick=closeCheckout;
+      $('#sx-checkout-cancel').onclick=closeCheckout;
       const invite=$('#discord-server-link');if(/^https:\/\/(discord\.gg|discord\.com\/invite)\/[A-Za-z0-9-]+$/.test(DISCORD_INVITE_URL)){invite.href=DISCORD_INVITE_URL;invite.setAttribute('aria-disabled','false')}else{invite.textContent='DISCORD MEGHÍVÓ HAMAROSAN'}
       $('#admin-new').onclick=resetProduct;$('#product-form').onsubmit=saveProduct;
       $('#p-image').oninput=previewImage;$('#upload-btn').onclick=uploadImage;
       $$('.faq-q').forEach(b=>b.onclick=()=>{const el=b.closest('.faq-item');el.classList.toggle('open');b.setAttribute('aria-expanded',String(el.classList.contains('open')))});
     }
-    window.addEventListener('load',()=>{bindUI();setupBrandLogo();initAnimations();restoreSession();loadStore()});
+    window.addEventListener('load',async()=>{bindUI();setupBrandLogo();initAnimations();await restoreSession();await loadStore();await handleReturnFromStripe()});
   </script>
 </body>
 </html>
